@@ -62,6 +62,339 @@ const C = {
   red:"#ff6b6b", pink:"#fd79a8", dim:"rgba(255,255,255,0.35)", mid:"rgba(255,255,255,0.65)",
 };
 
+// ─── SKILL-SPECIFIC FALLBACK QUESTION BANKS ───────────────────────────────────
+// Each skill has a curated pool; 5 are randomly selected per interview session
+const SKILL_QUESTION_BANK = {
+  "Java": [
+    { type:"text", topic:"OOP & Core Java", difficulty:"Medium", question:"Explain the difference between abstract classes and interfaces in Java 8+. When would you prefer one over the other? Give a real-world example from your projects." },
+    { type:"code", topic:"Collections", difficulty:"Hard", question:"Implement a generic LRU (Least Recently Used) cache using LinkedHashMap or your own doubly-linked-list + HashMap approach. Support get() and put() in O(1).", starterCode:"class LRUCache {\n  private final int capacity;\n  // add your data structures here\n\n  public LRUCache(int capacity) {\n    this.capacity = capacity;\n  }\n\n  public int get(int key) {\n    // implement\n    return -1;\n  }\n\n  public void put(int key, int value) {\n    // implement\n  }\n}" },
+    { type:"text", topic:"Multithreading", difficulty:"Hard", question:"Explain Java's memory model and the happens-before relationship. How do volatile, synchronized, and the java.util.concurrent package prevent race conditions? Describe a real bug you found related to concurrency." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a high-throughput Java microservice that processes 50,000 order events per second. Discuss thread pool sizing, non-blocking I/O, reactive streams vs. virtual threads (Project Loom), and how you'd avoid GC pressure." },
+    { type:"code", topic:"Streams & Functional", difficulty:"Medium", question:"Using Java Streams, group a list of Employee objects by department, find the highest-paid employee in each department, and return a Map<String, Employee>. Avoid null pointer exceptions.", starterCode:"import java.util.*;\nimport java.util.stream.*;\n\nrecord Employee(String name, String dept, double salary) {}\n\npublic class Solution {\n  public Map<String, Employee> topEarnerByDept(List<Employee> employees) {\n    // implement with streams\n    return null;\n  }\n}" },
+    { type:"text", topic:"JVM Internals", difficulty:"Hard", question:"Describe how the JVM's garbage collectors (G1, ZGC, Shenandoah) differ. How do you diagnose memory leaks and GC pauses in production? What tools do you use?" },
+    { type:"code", topic:"Design Patterns", difficulty:"Medium", question:"Implement the Builder pattern for a complex HttpRequest object with optional headers, query params, body, and timeout. Ensure it is immutable and thread-safe.", starterCode:"public class HttpRequest {\n  private final String url;\n  private final String method;\n  // add more fields\n\n  private HttpRequest(Builder builder) {\n    // implement\n  }\n\n  public static class Builder {\n    // implement fluent builder\n  }\n}" },
+    { type:"text", topic:"Spring & Frameworks", difficulty:"Medium", question:"How does Spring's dependency injection container work under the hood? Explain bean lifecycle, scopes, circular dependency handling, and how AOP proxies are created." },
+  ],
+
+  "Python": [
+    { type:"text", topic:"Python Internals", difficulty:"Medium", question:"Explain Python's GIL (Global Interpreter Lock). How does it impact CPU-bound vs I/O-bound applications? How do multiprocessing and asyncio help bypass its limitations?" },
+    { type:"code", topic:"Decorators & Metaclasses", difficulty:"Hard", question:"Write a @retry decorator that retries a function up to N times with exponential backoff on exception, and a @timeout decorator that raises an error if execution exceeds a given number of seconds.", starterCode:"import time\nimport functools\n\ndef retry(max_attempts=3, backoff_factor=2):\n    def decorator(func):\n        @functools.wraps(func)\n        def wrapper(*args, **kwargs):\n            # implement retry with exponential backoff\n            pass\n        return wrapper\n    return decorator\n\ndef timeout(seconds):\n    # implement timeout decorator\n    pass" },
+    { type:"text", topic:"Async & Concurrency", difficulty:"Hard", question:"Compare asyncio, threading, and multiprocessing in Python. When would you use each? Describe how you'd build a high-concurrency web scraper using asyncio with rate limiting." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a Python-based data pipeline that ingests 10 GB of JSON logs daily, transforms them, and loads into a data warehouse. Discuss tools (Airflow, Celery, Kafka), error handling, and scaling strategies." },
+    { type:"code", topic:"Data Structures", difficulty:"Medium", question:"Implement a Trie (prefix tree) in Python supporting insert, search, and startsWith operations. Then use it to build an autocomplete function that returns all words with a given prefix.", starterCode:"class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.is_end = False\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        pass\n\n    def search(self, word: str) -> bool:\n        pass\n\n    def autocomplete(self, prefix: str) -> list:\n        pass" },
+    { type:"text", topic:"Best Practices", difficulty:"Medium", question:"Explain Python's data model (dunder methods). How would you implement a custom container class that supports iteration, slicing, and the 'in' operator? Give practical examples." },
+    { type:"code", topic:"Algorithms", difficulty:"Hard", question:"Given a list of intervals, merge all overlapping intervals and return the result sorted by start time. Solve in O(n log n).", starterCode:"def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:\n    # Example: [[1,3],[2,6],[8,10],[15,18]] -> [[1,6],[8,10],[15,18]]\n    pass" },
+    { type:"text", topic:"Testing & CI", difficulty:"Medium", question:"Describe your approach to testing Python applications. How do you use pytest fixtures, parametrize, mocking, and property-based testing? How do you measure and enforce code coverage?" },
+  ],
+
+  "React": [
+    { type:"text", topic:"React Internals", difficulty:"Medium", question:"Explain React's reconciliation algorithm and virtual DOM diffing. How does the Fiber architecture improve on the old stack reconciler? What is concurrent mode and how does it affect rendering?" },
+    { type:"code", topic:"Hooks & State", difficulty:"Hard", question:"Build a custom useFetch hook that supports cancellation (AbortController), caching by URL, loading/error states, and automatic refetching on dependency change.", starterCode:"import { useState, useEffect, useRef } from 'react';\n\nconst cache = new Map();\n\nfunction useFetch(url, options = {}) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(false);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    // implement with AbortController and cache\n  }, [url]);\n\n  return { data, loading, error };\n}" },
+    { type:"text", topic:"Performance", difficulty:"Hard", question:"Describe at least 5 React performance optimization techniques you've used in production. Include memo, useMemo, useCallback, code splitting, virtualization, and why each was needed." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design the frontend architecture for a real-time collaborative document editor (like Google Docs) in React. Discuss state management, WebSocket integration, operational transforms or CRDTs, optimistic updates, and offline support." },
+    { type:"code", topic:"Context & State Management", difficulty:"Medium", question:"Implement a lightweight global state manager using React Context + useReducer that supports selectors (to prevent unnecessary re-renders), middleware (for logging), and TypeScript-friendly actions.", starterCode:"import React, { createContext, useContext, useReducer } from 'react';\n\n// implement createStore, Provider, and useSelector\nfunction createStore(reducer, initialState) {\n  // implement\n}\n\n// Usage should look like:\n// const store = createStore(reducer, { count: 0 });\n// const count = useSelector(state => state.count);" },
+    { type:"text", topic:"Testing", difficulty:"Medium", question:"How do you test React components effectively? Compare React Testing Library vs Enzyme. How do you test hooks, async operations, context providers, and user interactions? What do you mock and what do you not?" },
+    { type:"code", topic:"Advanced Patterns", difficulty:"Hard", question:"Implement a generic virtualized list component that renders only visible items for a list of 100,000 records. Support variable item heights and smooth scrolling.", starterCode:"import { useState, useRef, useCallback } from 'react';\n\nfunction VirtualList({ items, itemHeight = 50, containerHeight = 400, renderItem }) {\n  // implement windowing logic\n  return <div>/* implement */</div>;\n}" },
+    { type:"text", topic:"Architecture", difficulty:"Medium", question:"Explain micro-frontend architecture with React. How would you integrate multiple independently deployed React apps into one shell application? Discuss Module Federation, routing, shared state, and styling isolation." },
+  ],
+
+  "Angular": [
+    { type:"text", topic:"Angular Architecture", difficulty:"Medium", question:"Explain Angular's change detection mechanism. How do Default and OnPush strategies differ? When would you use detach() and markForCheck()? Give a real example where you optimized performance using these." },
+    { type:"code", topic:"RxJS & Observables", difficulty:"Hard", question:"Build an Angular service that auto-saves form data every 3 seconds using debounceTime, distinctUntilChanged, and switchMap. Handle HTTP errors gracefully with retryWhen and exponential backoff.", starterCode:"import { Injectable } from '@angular/core';\nimport { FormGroup } from '@angular/forms';\nimport { HttpClient } from '@angular/common/http';\nimport { Subject } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class AutoSaveService {\n  constructor(private http: HttpClient) {}\n\n  setupAutoSave(form: FormGroup, apiUrl: string) {\n    // implement with RxJS operators\n  }\n}" },
+    { type:"text", topic:"Dependency Injection", difficulty:"Hard", question:"Deep dive into Angular's hierarchical dependency injection. Explain ModuleInjector vs ElementInjector, providedIn options, multi-providers, injection tokens, and how you'd use them to build a plugin system." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a large-scale Angular application used by 500 developers across 20 teams. Discuss monorepo with Nx, lazy loading strategy, shared library boundaries, state management (NgRx vs Akita vs Signals), and CI/CD pipeline." },
+    { type:"code", topic:"Custom Directives", difficulty:"Medium", question:"Create an Angular structural directive *appPermission that shows/hides elements based on user roles fetched from a service, with support for 'AND' and 'OR' role logic.", starterCode:"import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';\nimport { AuthService } from './auth.service';\n\n@Directive({ selector: '[appPermission]' })\nexport class PermissionDirective {\n  @Input('appPermission') set roles(requiredRoles: string[]) {\n    // implement show/hide logic\n  }\n\n  constructor(\n    private template: TemplateRef<any>,\n    private vcr: ViewContainerRef,\n    private auth: AuthService\n  ) {}\n}" },
+    { type:"text", topic:"NgRx & State", difficulty:"Hard", question:"Explain NgRx's core concepts: Store, Actions, Reducers, Selectors, Effects. How do you handle optimistic updates, side effects, entity adapter, and component store? When is NgRx overkill?" },
+    { type:"code", topic:"Forms & Validation", difficulty:"Medium", question:"Build a dynamic reactive form that renders form controls based on a JSON schema (supports text, select, checkbox, date). Add cross-field validation (e.g., end date > start date) and async validator (check unique username via API).", starterCode:"import { Component, Input } from '@angular/core';\nimport { FormBuilder, FormGroup, AsyncValidatorFn } from '@angular/forms';\n\ninterface FieldConfig {\n  name: string;\n  type: 'text' | 'select' | 'checkbox' | 'date';\n  label: string;\n  options?: string[];\n  required?: boolean;\n}\n\n@Component({ selector: 'app-dynamic-form', template: '' })\nexport class DynamicFormComponent {\n  @Input() fields: FieldConfig[] = [];\n  form: FormGroup;\n\n  buildForm() {\n    // implement dynamic form construction\n  }\n}" },
+    { type:"text", topic:"Performance & Testing", difficulty:"Medium", question:"Describe your Angular testing strategy: unit tests for services/pipes, component testing with TestBed, integration tests, and e2e with Cypress or Playwright. How do you test NgRx effects and async pipes?" },
+  ],
+
+  "Spring Boot": [
+    { type:"text", topic:"Spring Boot Internals", difficulty:"Medium", question:"Explain Spring Boot's auto-configuration mechanism. How does @SpringBootApplication, @EnableAutoConfiguration, and spring.factories work? How would you write a custom auto-configuration starter?" },
+    { type:"code", topic:"REST API Design", difficulty:"Hard", question:"Implement a Spring Boot REST endpoint for paginated, filterable, and sortable product search. Use Spring Data JPA Specification for dynamic queries, and return a proper Page<ProductDTO> response.", starterCode:"@RestController\n@RequestMapping(\"/api/products\")\npublic class ProductController {\n\n  @Autowired\n  private ProductService productService;\n\n  @GetMapping\n  public ResponseEntity<Page<ProductDTO>> searchProducts(\n      @RequestParam(required = false) String name,\n      @RequestParam(required = false) String category,\n      @RequestParam(defaultValue = \"0\") int page,\n      @RequestParam(defaultValue = \"20\") int size,\n      @RequestParam(defaultValue = \"name,asc\") String sort) {\n    // implement\n    return null;\n  }\n}" },
+    { type:"text", topic:"Security", difficulty:"Hard", question:"How do you secure a Spring Boot application with OAuth2/JWT? Explain the resource server, authorization server, token validation, refresh token rotation, and how to implement role-based and method-level security." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a Spring Boot microservices architecture for an e-commerce platform. Cover service discovery (Eureka/Consul), API gateway (Spring Cloud Gateway), circuit breaker (Resilience4j), distributed tracing (Sleuth/Zipkin), and event-driven communication (Kafka)." },
+    { type:"code", topic:"Caching & Performance", difficulty:"Medium", question:"Implement a multi-level caching strategy in Spring Boot using @Cacheable with Redis as L2 cache and Caffeine as L1 cache. Handle cache eviction, TTL, and cache-aside pattern for a product catalog service.", starterCode:"@Service\npublic class ProductCatalogService {\n\n  // Configure multi-level cache\n  @Cacheable(cacheNames = \"products\", key = \"#productId\")\n  public ProductDTO getProduct(Long productId) {\n    // implement with proper caching annotations\n    return null;\n  }\n\n  @CacheEvict(cacheNames = \"products\", key = \"#product.id\")\n  public ProductDTO updateProduct(ProductDTO product) {\n    return null;\n  }\n}" },
+    { type:"text", topic:"Testing", difficulty:"Medium", question:"Describe comprehensive testing for Spring Boot: unit tests with Mockito, slice tests (@WebMvcTest, @DataJpaTest, @JsonTest), integration tests with @SpringBootTest, Testcontainers for databases, and contract testing with Spring Cloud Contract." },
+    { type:"code", topic:"Reactive Programming", difficulty:"Hard", question:"Implement a Spring WebFlux reactive endpoint that aggregates data from 3 external APIs concurrently, handles partial failures gracefully using fallbacks, and streams the combined result as Server-Sent Events.", starterCode:"@RestController\n@RequestMapping(\"/api/dashboard\")\npublic class DashboardController {\n\n  @Autowired\n  private WebClient webClient;\n\n  @GetMapping(value = \"/stream\", produces = MediaType.TEXT_EVENT_STREAM_VALUE)\n  public Flux<DashboardEvent> streamDashboard() {\n    // combine 3 API calls with Mono.zip, handle errors\n    return Flux.empty();\n  }\n}" },
+    { type:"text", topic:"Database & Transactions", difficulty:"Medium", question:"Explain Spring's transaction management: @Transactional propagation levels, isolation levels, and rollback rules. How do you handle distributed transactions across microservices using Saga pattern?" },
+  ],
+
+  "Node.js": [
+    { type:"text", topic:"Event Loop", difficulty:"Medium", question:"Describe Node.js's event loop in detail: the phases (timers, I/O, poll, check, close), microtask queue (Promise, queueMicrotask, nextTick), and how they interact. Give an example where incorrect understanding caused a bug." },
+    { type:"code", topic:"Streams", difficulty:"Hard", question:"Implement a Transform stream that reads a large CSV file, parses each row, validates fields, transforms the data, and writes valid records to one output stream and invalid records to an error stream.", starterCode:"const { Transform, pipeline } = require('stream');\nconst fs = require('fs');\n\nclass CSVTransformer extends Transform {\n  constructor(options) {\n    super({ ...options, objectMode: true });\n    this.buffer = '';\n  }\n\n  _transform(chunk, encoding, callback) {\n    // parse CSV, validate, transform\n  }\n\n  _flush(callback) {\n    // handle remaining buffer\n  }\n}\n\n// Usage: pipeline(readStream, new CSVTransformer(), writeStream, errorHandler)" },
+    { type:"text", topic:"Performance & Clustering", difficulty:"Hard", question:"How do you scale a Node.js application beyond a single CPU core? Compare cluster module, worker_threads, PM2, and container-based horizontal scaling. When do you use worker_threads vs child_process?" },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a real-time notifications system using Node.js that handles 1 million concurrent WebSocket connections. Discuss Socket.io vs raw WebSockets, Redis pub/sub for multi-instance coordination, load balancing with sticky sessions, and memory management." },
+    { type:"code", topic:"Async Patterns", difficulty:"Medium", question:"Implement a job queue system with Node.js and Redis (using ioredis) that supports priority queues, retries with backoff, concurrency control, and progress tracking for long-running background tasks.", starterCode:"const Redis = require('ioredis');\n\nclass JobQueue {\n  constructor(queueName, options = {}) {\n    this.queueName = queueName;\n    this.concurrency = options.concurrency || 5;\n    this.redis = new Redis();\n  }\n\n  async add(jobData, priority = 0) {\n    // add job to priority queue\n  }\n\n  async process(handler) {\n    // process jobs with concurrency control and retry\n  }\n}" },
+    { type:"text", topic:"Security", difficulty:"Medium", question:"What are the top 10 security vulnerabilities in Node.js applications and how do you mitigate them? Cover prototype pollution, ReDoS, dependency vulnerabilities, JWT pitfalls, and secrets management." },
+    { type:"code", topic:"API Design", difficulty:"Medium", question:"Build an Express middleware pipeline that implements: request ID tracing, structured JSON logging, rate limiting per API key (using Redis), request validation (using Zod/Joi), and error handling with proper HTTP status codes.", starterCode:"const express = require('express');\nconst app = express();\n\n// Implement each middleware\nconst requestId = (req, res, next) => { /* add unique ID */ next(); };\nconst structuredLogger = (req, res, next) => { /* log with request ID */ next(); };\nconst rateLimiter = (req, res, next) => { /* Redis-based rate limit */ next(); };\nconst validate = (schema) => (req, res, next) => { /* Zod/Joi validation */ next(); };\nconst errorHandler = (err, req, res, next) => { /* structured error response */ };" },
+    { type:"text", topic:"Testing & DevOps", difficulty:"Medium", question:"Describe your Node.js testing and deployment strategy. How do you use Jest for unit/integration tests, Supertest for API testing, and how do you manage environment configs, health checks, and graceful shutdown in production?" },
+  ],
+
+  "AWS": [
+    { type:"text", topic:"Core Services", difficulty:"Medium", question:"Compare EC2, ECS, EKS, Fargate, and Lambda for running containerized workloads. What factors drive your choice for each? Describe a migration you did from EC2 to containers or serverless." },
+    { type:"code", topic:"Infrastructure as Code", difficulty:"Hard", question:"Write a Terraform or CDK configuration that creates a highly available web application: ALB, ECS Fargate service (3 tasks across 3 AZs), RDS Aurora with read replicas, ElastiCache Redis, and CloudFront distribution.", starterCode:"// AWS CDK (TypeScript) - implement the stack\nimport * as cdk from 'aws-cdk-lib';\nimport * as ecs from 'aws-cdk-lib/aws-ecs';\nimport * as ec2 from 'aws-cdk-lib/aws-ec2';\nimport * as rds from 'aws-cdk-lib/aws-rds';\n\nexport class HighAvailabilityStack extends cdk.Stack {\n  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {\n    super(scope, id, props);\n    // create VPC, ALB, ECS cluster, RDS, Redis, CloudFront\n  }\n}" },
+    { type:"text", topic:"Security & IAM", difficulty:"Hard", question:"Explain AWS IAM best practices: least privilege, permission boundaries, Service Control Policies (SCPs), attribute-based access control (ABAC), and cross-account access patterns. How do you audit and remediate IAM misconfigurations?" },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a serverless data processing pipeline on AWS: IoT devices send 100,000 events/minute via API Gateway → Kinesis Data Streams → Lambda → S3 → Glue → Athena. Discuss data partitioning, error handling, cost optimization, and monitoring with CloudWatch." },
+    { type:"code", topic:"Lambda & Serverless", difficulty:"Medium", question:"Write a Lambda function that processes S3 events, validates and transforms incoming JSON files, writes to DynamoDB with conditional writes to prevent duplicates, and sends failure notifications to SNS. Include proper error handling and structured logging.", starterCode:"import boto3\nimport json\nfrom typing import Any\n\ndynamodb = boto3.resource('dynamodb')\ns3 = boto3.client('s3')\nsns = boto3.client('sns')\n\ndef lambda_handler(event: dict, context: Any):\n    for record in event.get('Records', []):\n        try:\n            # process S3 event\n            # validate JSON\n            # write to DynamoDB with condition\n            # handle duplicates\n            pass\n        except Exception as e:\n            # send SNS notification\n            pass" },
+    { type:"text", topic:"Cost Optimization", difficulty:"Medium", question:"Describe your AWS cost optimization strategies. How do you use Cost Explorer, Savings Plans vs Reserved Instances, Spot instances for fault-tolerant workloads, S3 storage classes lifecycle policies, and right-sizing recommendations?" },
+    { type:"code", topic:"Networking", difficulty:"Hard", question:"Design VPC architecture for a 3-tier application with public/private/isolated subnets across 3 AZs. Include NAT Gateway placement, VPC endpoints for S3/DynamoDB, Transit Gateway for multi-VPC connectivity, and Security Group rules.", starterCode:"# Write as Terraform HCL or pseudocode with actual CIDR blocks\n# Implement:\n# - VPC (10.0.0.0/16)\n# - 3 public subnets (10.0.0.0/24, 10.0.1.0/24, 10.0.2.0/24)\n# - 3 private subnets for app tier\n# - 3 isolated subnets for database\n# - NAT Gateways, Internet Gateway\n# - VPC endpoints, Security Groups\n\nresource \"aws_vpc\" \"main\" {\n  cidr_block = \"10.0.0.0/16\"\n  # continue...\n}" },
+    { type:"text", topic:"Monitoring & Reliability", difficulty:"Medium", question:"How do you implement observability on AWS? Describe your approach to CloudWatch metrics/logs/alarms, X-Ray distributed tracing, CloudWatch Container Insights, synthetic monitoring, and building SLOs/SLAs dashboards." },
+  ],
+
+  "SQL": [
+    { type:"text", topic:"Query Optimization", difficulty:"Medium", question:"Explain how a query optimizer works. What is the difference between a clustered and non-clustered index? Describe how you would analyze and optimize a slow query in a production database (include EXPLAIN/EXPLAIN ANALYZE)." },
+    { type:"code", topic:"Advanced Queries", difficulty:"Hard", question:"Write a SQL query to find the top 3 products by revenue for each category in each month of the year, including months with zero sales. Use CTEs, window functions, and handle NULL values properly.", starterCode:"-- Tables: orders(id, customer_id, created_at)\n--         order_items(id, order_id, product_id, quantity, price)\n--         products(id, name, category_id)\n--         categories(id, name)\n\n-- Write your solution:\nWITH monthly_revenue AS (\n  -- calculate revenue per product per month\n),\nranked AS (\n  -- rank products within each category per month\n)\nSELECT * FROM ranked WHERE rank <= 3;" },
+    { type:"text", topic:"Database Design", difficulty:"Hard", question:"Design a normalized database schema for a multi-tenant SaaS application. Explain your approach to tenant isolation (row-level, schema-level, database-level), indexing strategy, and how you'd handle schema migrations for 10,000 tenants." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a reporting database for an e-commerce platform with 1 billion orders. Discuss OLTP vs OLAP separation, star/snowflake schema design, partitioning strategies, materialized views, and how you'd handle real-time analytics queries without impacting transactional performance." },
+    { type:"code", topic:"Window Functions", difficulty:"Hard", question:"Given a table of employee salaries with salary history over time, write a query that finds employees whose salary increased more than 20% year-over-year, their current salary rank within their department, and the running total of salary cost per department.", starterCode:"-- Table: salary_history(employee_id, department_id, salary, effective_date, end_date)\n-- Table: employees(id, name, department_id, hire_date)\n\n-- Write your solution:\nSELECT\n  e.name,\n  e.department_id,\n  -- salary increase percentage YoY\n  -- salary rank within department\n  -- running total\nFROM employees e\nJOIN salary_history sh ON ...\nWHERE ..." },
+    { type:"text", topic:"Transactions & Locking", difficulty:"Medium", question:"Explain ACID properties and isolation levels (Read Uncommitted, Read Committed, Repeatable Read, Serializable). What are phantom reads, dirty reads, and lost updates? When would you deliberately choose a lower isolation level?" },
+    { type:"code", topic:"Stored Procedures", difficulty:"Medium", question:"Write a stored procedure that safely transfers funds between two bank accounts, handles insufficient funds, logs the transaction, and ensures atomicity even if the procedure is called concurrently by multiple sessions.", starterCode:"CREATE OR REPLACE PROCEDURE transfer_funds(\n  p_from_account_id INT,\n  p_to_account_id INT,\n  p_amount DECIMAL(15,2)\n)\nLANGUAGE plpgsql\nAS $$\nDECLARE\n  v_balance DECIMAL(15,2);\nBEGIN\n  -- implement with proper locking and error handling\nEND;\n$$;" },
+    { type:"text", topic:"Performance Tuning", difficulty:"Hard", question:"Describe 5 common SQL anti-patterns that kill performance and how to fix them. Include: N+1 queries, SELECT *, functions in WHERE clauses, implicit type conversions, and missing covering indexes." },
+  ],
+
+  "NoSQL": [
+    { type:"text", topic:"Data Modeling", difficulty:"Medium", question:"Explain the fundamental difference between NoSQL data modeling and relational modeling. How do you model a one-to-many and many-to-many relationship in MongoDB, DynamoDB, and Cassandra differently? When do you embed vs reference?" },
+    { type:"code", topic:"MongoDB Aggregation", difficulty:"Hard", question:"Write a MongoDB aggregation pipeline that analyzes user activity logs: group by user and day, calculate average session duration, identify users with declining engagement (3 consecutive days of decreasing activity), and return top 10 at-risk users.", starterCode:"db.activity_logs.aggregate([\n  // Stage 1: Match recent 30 days\n  { $match: { timestamp: { $gte: new Date(Date.now() - 30*24*60*60*1000) } } },\n\n  // Stage 2: Group by user and day\n  // ...\n\n  // Stage 3: Calculate declining engagement\n  // ...\n\n  // Stage 4: Top 10 at-risk users\n  // ...\n]);" },
+    { type:"text", topic:"CAP Theorem", difficulty:"Hard", question:"Explain the CAP theorem and PACELC extension. Give concrete examples of systems that choose CP (HBase, ZooKeeper), AP (Cassandra, DynamoDB with eventual consistency), and CA (single-node SQL). How does this drive your NoSQL selection for different use cases?" },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a NoSQL database schema for a social media feed system (like Twitter/Instagram) that serves 100 million users with 1 billion posts. Cover fan-out on write vs read, hot user problem, time-series queries, Redis for caching, and Cassandra for storage." },
+    { type:"code", topic:"DynamoDB Design", difficulty:"Hard", question:"Design DynamoDB table(s) for an e-commerce order management system. Support: get order by ID, list orders by customer (sorted by date), list orders by status, and update order status. Define partition key, sort key, and GSIs. Implement a query using the AWS SDK.", starterCode:"// Table design first (describe PK, SK, GSIs)\n// Then implement using AWS SDK\n\nconst { DynamoDBClient, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');\nconst client = new DynamoDBClient({ region: 'us-east-1' });\n\n// Table: Orders\n// PK: ?, SK: ?, GSI1: ?, GSI2: ?\n\nasync function getOrdersByCustomer(customerId, limit = 20) {\n  // implement\n}\n\nasync function updateOrderStatus(orderId, newStatus) {\n  // implement with conditional update\n}" },
+    { type:"text", topic:"Cassandra", difficulty:"Hard", question:"Explain Cassandra's architecture: consistent hashing, vnodes, replication factor, read/write consistency levels, compaction strategies, and tombstones. How do you design tables query-first, and what are the anti-patterns (allow filtering, large partitions)?" },
+    { type:"code", topic:"Redis Patterns", difficulty:"Medium", question:"Implement these Redis patterns: distributed rate limiter using sliding window log, distributed lock with automatic expiry and lock renewal, and a leaderboard with sorted sets supporting pagination and score updates.", starterCode:"const Redis = require('ioredis');\nconst redis = new Redis();\n\n// 1. Sliding window rate limiter\nasync function isRateLimited(userId, maxRequests = 100, windowSeconds = 60) {\n  // implement\n}\n\n// 2. Distributed lock\nasync function acquireLock(lockKey, ttlMs = 5000) {\n  // implement with SETNX and Lua script\n}\n\n// 3. Leaderboard\nasync function getLeaderboard(gameId, page = 1, pageSize = 10) {\n  // implement with ZREVRANGE\n}" },
+    { type:"text", topic:"Consistency & Replication", difficulty:"Medium", question:"Explain eventual consistency patterns: read-your-writes, monotonic reads, causal consistency. How do vector clocks and CRDTs help with conflict resolution in distributed NoSQL systems? Give a practical example." },
+  ],
+
+  "Microservices": [
+    { type:"text", topic:"Service Design", difficulty:"Medium", question:"How do you determine the right size and boundaries for a microservice? Explain Domain-Driven Design (DDD), bounded contexts, aggregates, and how they guide service decomposition. Describe a service boundary mistake you've seen or made." },
+    { type:"code", topic:"API Gateway", difficulty:"Hard", question:"Implement a lightweight API gateway in Node.js/Express that handles: JWT authentication, rate limiting per user, request routing to downstream services, circuit breaking (using opossum), response caching, and request/response transformation.", starterCode:"const express = require('express');\nconst CircuitBreaker = require('opossum');\nconst app = express();\n\nconst routes = {\n  '/api/users': 'http://user-service:3001',\n  '/api/orders': 'http://order-service:3002',\n  '/api/products': 'http://product-service:3003',\n};\n\n// Implement middleware chain:\n// 1. JWT auth\nconst authenticate = (req, res, next) => { /* verify JWT */ next(); };\n// 2. Rate limiter\n// 3. Circuit breaker per service\n// 4. Proxy with transformation" },
+    { type:"text", topic:"Communication Patterns", difficulty:"Hard", question:"Compare synchronous (REST, gRPC) vs asynchronous (Kafka, RabbitMQ, SQS) communication in microservices. When do you use each? Explain Saga pattern (choreography vs orchestration) for distributed transactions with a concrete example." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design the microservices architecture for a ride-sharing platform (like Uber). Cover: driver location service (real-time geospatial queries), matching service, pricing service, trip management, notifications, and how they communicate. Address the challenges of distributed state and consistency." },
+    { type:"code", topic:"Service Discovery", difficulty:"Medium", question:"Implement a service registry with health checking in Node.js. Services should self-register on startup, deregister on shutdown, send periodic heartbeats, and clients should get healthy instances with round-robin or weighted load balancing.", starterCode:"// Service Registry Server\nconst services = new Map(); // serviceName -> [{id, host, port, lastHeartbeat}]\n\nclass ServiceRegistry {\n  register(name, host, port) {\n    // return instanceId, start heartbeat timer\n  }\n\n  deregister(name, instanceId) {\n    // remove instance\n  }\n\n  heartbeat(name, instanceId) {\n    // update lastHeartbeat timestamp\n  }\n\n  getHealthyInstances(name) {\n    // return instances with heartbeat < 30s ago\n  }\n\n  getNextInstance(name) {\n    // round-robin load balancing\n  }\n}" },
+    { type:"text", topic:"Observability", difficulty:"Hard", question:"Describe a complete observability stack for microservices: structured logging (ELK/Loki), metrics (Prometheus/Grafana), distributed tracing (Jaeger/Zipkin/OpenTelemetry). How do you correlate a user request across 8 services? What SLIs/SLOs do you define?" },
+    { type:"code", topic:"Event Sourcing & CQRS", difficulty:"Hard", question:"Implement a basic event sourcing system for an Order aggregate: store events (OrderCreated, ItemAdded, OrderConfirmed, OrderCancelled), rebuild state by replaying events, create a read model projection, and handle snapshotting for performance.", starterCode:"// Event Store\nclass EventStore {\n  constructor() { this.events = []; }\n\n  append(aggregateId, event, expectedVersion) {\n    // implement optimistic concurrency\n  }\n\n  getEvents(aggregateId, fromVersion = 0) {\n    // return events\n  }\n}\n\n// Order Aggregate\nclass Order {\n  apply(event) { /* update state */ }\n  static rebuild(events) { /* replay events */ }\n  addItem(productId, quantity) { /* emit event */ }\n  confirm() { /* emit event */ }\n}\n\n// Read Model Projection\nclass OrderProjection {\n  handle(event) { /* build read-optimized view */ }\n}" },
+    { type:"text", topic:"Resilience Patterns", difficulty:"Medium", question:"Explain resilience patterns for microservices: Circuit Breaker (states: closed/open/half-open), Bulkhead (thread/connection pool isolation), Retry with exponential backoff, Timeout, and Fallback. Describe Resilience4j or Polly configuration for production use." },
+  ],
+
+  "DevOps": [
+    { type:"text", topic:"CI/CD Pipelines", difficulty:"Medium", question:"Describe a production CI/CD pipeline you've built. Cover: branching strategy (GitFlow vs trunk-based), automated testing gates, security scanning (SAST/DAST/dependency scan), artifact management, and deployment strategies (blue-green, canary, rolling)." },
+    { type:"code", topic:"Docker & Containers", difficulty:"Hard", question:"Write a multi-stage Dockerfile for a Node.js application that: minimizes final image size (<100MB), runs as non-root user, includes health check, separates dev dependencies, and follows security best practices. Then write a docker-compose.yml for local development with hot reload, debugging, and dependency services.", starterCode:"# Dockerfile - implement multi-stage build\nFROM node:20-alpine AS dependencies\n# install production deps\n\nFROM node:20-alpine AS builder\n# build step\n\nFROM node:20-alpine AS production\n# minimal production image\n\n---\n# docker-compose.yml\nversion: '3.8'\nservices:\n  app:\n    # implement with volumes, env, health check\n  postgres:\n    # implement\n  redis:\n    # implement" },
+    { type:"text", topic:"Kubernetes", difficulty:"Hard", question:"Explain Kubernetes resource management: Requests vs Limits, LimitRange, ResourceQuota, HPA (Horizontal Pod Autoscaler), VPA (Vertical Pod Autoscaler), and cluster autoscaler. How do you right-size pods and prevent resource starvation in multi-tenant clusters?" },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a GitOps-based deployment platform for 50 microservices across 3 environments (dev/staging/prod) on Kubernetes. Cover: ArgoCD or Flux setup, Helm charts organization, secrets management (Vault/Sealed Secrets), progressive delivery with Flagger, and incident rollback procedures." },
+    { type:"code", topic:"Infrastructure as Code", difficulty:"Hard", question:"Write Terraform code to provision a production-ready EKS cluster: managed node groups with spot+on-demand mix, cluster autoscaler, AWS Load Balancer Controller, EBS CSI driver, IRSA for pod-level IAM, and VPC with private endpoint.", starterCode:"# main.tf - implement EKS cluster\nterraform {\n  required_providers {\n    aws = { source = \"hashicorp/aws\", version = \"~> 5.0\" }\n    kubernetes = { source = \"hashicorp/kubernetes\" }\n    helm = { source = \"hashicorp/helm\" }\n  }\n}\n\nmodule \"eks\" {\n  source  = \"terraform-aws-modules/eks/aws\"\n  # configure node groups, add-ons, IRSA\n}\n\n# cluster autoscaler helm release\nresource \"helm_release\" \"cluster_autoscaler\" {\n  # implement\n}" },
+    { type:"text", topic:"Monitoring & Alerting", difficulty:"Medium", question:"Design a monitoring strategy for a Kubernetes-based platform: Prometheus scraping config, recording rules vs alerting rules, Grafana dashboard design, PagerDuty/OpsGenie integration, and on-call runbooks. How do you set meaningful SLO-based alerts to reduce alert fatigue?" },
+    { type:"code", topic:"Shell Scripting & Automation", difficulty:"Medium", question:"Write a bash script that automates a deployment: checks if the Docker image exists in ECR, runs database migrations (with rollback on failure), performs a Kubernetes rolling update, monitors pod health for 5 minutes, and automatically rolls back if more than 10% of pods fail health checks.", starterCode:"#!/bin/bash\nset -euo pipefail\n\nIMAGE_URI=\"${ECR_REGISTRY}/${SERVICE_NAME}:${VERSION}\"\nNAMESPACE=\"production\"\nDEPLOYMENT=\"${SERVICE_NAME}\"\n\n# 1. Verify image exists in ECR\ncheck_image() {\n  # implement\n}\n\n# 2. Run migrations\nrun_migrations() {\n  # implement with rollback\n}\n\n# 3. Rolling update\ndeploy() {\n  # implement\n}\n\n# 4. Monitor health\nmonitor_rollout() {\n  # check pod health for 5 min\n}\n\n# 5. Rollback if needed\nrollback() {\n  # implement\n}" },
+    { type:"text", topic:"Security & Compliance", difficulty:"Hard", question:"Explain DevSecOps practices: shifting security left, SAST/DAST/SCA integration in pipelines, container image scanning (Trivy/Snyk), Kubernetes security (PSP/OPA Gatekeeper/Kyverno, network policies, RBAC), and secrets rotation. How do you achieve SOC2 compliance in a CI/CD context?" },
+  ],
+
+  "Data Science": [
+    { type:"text", topic:"ML Algorithms", difficulty:"Medium", question:"Explain the bias-variance tradeoff. How does it manifest in different algorithms (decision trees, linear regression, neural networks)? Describe specific techniques (regularization, dropout, early stopping, ensemble methods) you've used to address underfitting and overfitting in a real project." },
+    { type:"code", topic:"Feature Engineering", difficulty:"Hard", question:"Write a Python pipeline using scikit-learn that preprocesses a dataset with: missing values (numerical and categorical), skewed distributions, high cardinality categoricals, date features, and creates interaction features. Use ColumnTransformer and Pipeline for reproducibility.", starterCode:"import pandas as pd\nimport numpy as np\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.preprocessing import StandardScaler, OneHotEncoder, TargetEncoder\nfrom sklearn.impute import SimpleImputer, KNNImputer\nfrom sklearn.base import TransformerMixin, BaseEstimator\n\nclass DateFeatureExtractor(BaseEstimator, TransformerMixin):\n    def fit(self, X, y=None): return self\n    def transform(self, X):\n        # extract day, month, year, day_of_week, is_weekend, quarter\n        pass\n\n# Build full preprocessing pipeline\npreprocessor = ColumnTransformer([\n  ('num', ..., numerical_cols),\n  ('cat', ..., categorical_cols),\n  ('date', ..., date_cols),\n])" },
+    { type:"text", topic:"Model Evaluation", difficulty:"Hard", question:"Beyond accuracy, explain when and why you'd use: precision/recall/F1, ROC-AUC vs PR-AUC, calibration curves, Cohen's kappa, NDCG for ranking, and RMSE vs MAE vs MAPE for regression. Describe a case where the wrong metric led to a flawed production model." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design an end-to-end ML platform for a recommendation system at scale: data ingestion (batch + streaming), feature store, model training (distributed with Ray/Spark), experiment tracking (MLflow), model serving (latency <50ms), A/B testing framework, and monitoring for data drift and model degradation." },
+    { type:"code", topic:"Statistical Analysis", difficulty:"Medium", question:"Implement A/B test analysis from scratch: calculate required sample size using power analysis, run t-test and Mann-Whitney U test, apply multiple testing correction (Bonferroni, Benjamini-Hochberg), and visualize confidence intervals. Handle the case of early stopping (sequential testing).", starterCode:"import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\ndef calculate_sample_size(baseline_rate, min_detectable_effect, alpha=0.05, power=0.8):\n    # implement using z-scores for proportions\n    pass\n\ndef run_ab_test(control_data, treatment_data, metric_type='continuous'):\n    # implement t-test and Mann-Whitney U\n    # return p-value, confidence interval, effect size\n    pass\n\ndef apply_multiple_testing_correction(p_values, method='bh'):\n    # implement Bonferroni and Benjamini-Hochberg\n    pass" },
+    { type:"text", topic:"Deep Learning", difficulty:"Hard", question:"Explain the attention mechanism and how Transformers work. Compare self-attention, multi-head attention, and cross-attention. How do positional encodings work? Describe fine-tuning strategies for LLMs (LoRA, QLoRA, prefix tuning) and when you'd use each." },
+    { type:"code", topic:"Time Series", difficulty:"Hard", question:"Implement a time series forecasting pipeline for sales prediction: detect and handle seasonality, trend decomposition (STL), implement SARIMA and Prophet models, evaluate with walk-forward cross-validation, and handle anomalies and holiday effects.", starterCode:"import pandas as pd\nimport numpy as np\nfrom statsmodels.tsa.statespace.sarimax import SARIMAX\nfrom prophet import Prophet\nfrom sklearn.metrics import mean_absolute_percentage_error\n\ndef decompose_and_clean(ts: pd.Series) -> pd.Series:\n    # STL decomposition, anomaly detection\n    pass\n\ndef walk_forward_cv(ts: pd.Series, model_fn, n_splits=5, horizon=30):\n    # implement time series cross-validation\n    pass\n\ndef ensemble_forecast(ts: pd.Series, horizon=30):\n    # combine SARIMA + Prophet predictions\n    pass" },
+    { type:"text", topic:"MLOps", difficulty:"Medium", question:"Describe the full ML lifecycle management: experiment tracking (MLflow/W&B), model versioning, feature store usage, model registry and promotion gates, champion-challenger deployment, and monitoring for concept drift, data drift, and prediction drift in production." },
+  ],
+
+  "Flutter": [
+    { type:"text", topic:"Flutter Architecture", difficulty:"Medium", question:"Explain Flutter's rendering pipeline: Widget tree → Element tree → RenderObject tree. How does the three-tree architecture enable efficient UI updates? What triggers a rebuild vs a repaint vs a relayout? How do you minimize unnecessary rebuilds?" },
+    { type:"code", topic:"State Management", difficulty:"Hard", question:"Implement a shopping cart feature using Riverpod with: AsyncNotifier for cart operations (async add/remove/update), optimistic updates with rollback on server error, persistence using SharedPreferences, and derived providers for cart total and item count.", starterCode:"import 'package:flutter_riverpod/flutter_riverpod.dart';\n\n@freezed\nclass CartItem with _\\$CartItem {\n  const factory CartItem({\n    required String productId,\n    required String name,\n    required double price,\n    required int quantity,\n  }) = _CartItem;\n}\n\n@riverpod\nclass CartNotifier extends _\\$CartNotifier {\n  @override\n  Future<List<CartItem>> build() async {\n    // load from persistence\n  }\n\n  Future<void> addItem(CartItem item) async {\n    // implement with optimistic update\n  }\n\n  // total and itemCount derived providers\n}" },
+    { type:"text", topic:"Performance Optimization", difficulty:"Hard", question:"Describe Flutter performance optimization techniques: const constructors, RepaintBoundary, ListView.builder vs Column, image caching, avoiding setState in large trees, using Isolates for heavy computation, and profiling with DevTools (CPU, memory, GPU). Walk through a real performance issue you solved." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a Flutter app architecture for a large-scale fintech app: clean architecture layers (data/domain/presentation), offline-first with SQLite sync, biometric authentication, deep linking, push notifications, internationalization, and CI/CD with Fastlane and GitHub Actions." },
+    { type:"code", topic:"Custom Widgets", difficulty:"Medium", question:"Build a custom Flutter widget: an animated progress stepper (like onboarding steps) with smooth transitions, haptic feedback, custom painter for the connector lines, and accessibility support (Semantics). It should be reusable and accept a callback for step changes.", starterCode:"import 'package:flutter/material.dart';\nimport 'package:flutter/services.dart';\n\nclass AnimatedStepper extends StatefulWidget {\n  final int totalSteps;\n  final int currentStep;\n  final ValueChanged<int> onStepTapped;\n  final List<String> labels;\n\n  const AnimatedStepper({\n    required this.totalSteps,\n    required this.currentStep,\n    required this.onStepTapped,\n    required this.labels,\n  });\n\n  @override\n  State<AnimatedStepper> createState() => _AnimatedStepperState();\n}\n\nclass _AnimatedStepperState extends State<AnimatedStepper>\n    with SingleTickerProviderStateMixin {\n  // implement with CustomPainter and AnimationController\n}" },
+    { type:"text", topic:"Platform Integration", difficulty:"Medium", question:"Explain Flutter platform channels (MethodChannel, EventChannel, BasicMessageChannel). How do you write a platform plugin for iOS (Swift) and Android (Kotlin) to access native APIs? Describe common pitfalls like thread handling and memory management when bridging native code." },
+    { type:"code", topic:"Networking & Caching", difficulty:"Hard", question:"Implement a robust API client in Flutter using Dio with: token refresh interceptor (handle 401, queue concurrent requests during refresh), response caching (Hive/Isar), offline queue for mutations, and request deduplication.", starterCode:"import 'package:dio/dio.dart';\nimport 'dart:async';\n\nclass ApiClient {\n  late final Dio _dio;\n  bool _isRefreshing = false;\n  final List<Completer> _refreshQueue = [];\n\n  ApiClient() {\n    _dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));\n    _dio.interceptors.addAll([\n      _TokenRefreshInterceptor(this),\n      _CacheInterceptor(),\n      _OfflineQueueInterceptor(),\n    ]);\n  }\n\n  Future<Response> get(String path) => _dio.get(path);\n  // implement token refresh logic\n}" },
+    { type:"text", topic:"Testing", difficulty:"Medium", question:"Describe Flutter testing pyramid: unit tests (pure Dart), widget tests (with flutter_test and pump), integration tests (with integration_test package). How do you test Riverpod providers, mock platform channels, handle async gaps in widget tests, and run golden tests?" },
+  ],
+
+  "Go": [
+    { type:"text", topic:"Go Concurrency", difficulty:"Medium", question:"Explain Go's concurrency model: goroutines vs OS threads, the Go scheduler (M:N threading, GOMAXPROCS), channels (buffered vs unbuffered), select statement, and common patterns (fan-in, fan-out, worker pools, pipeline). Describe a concurrency bug you encountered and how goroutine dumps helped diagnose it." },
+    { type:"code", topic:"Channels & Goroutines", difficulty:"Hard", question:"Implement a concurrent web crawler in Go that: limits concurrency to N goroutines using a semaphore, avoids revisiting URLs using a concurrent map, respects a context for cancellation/timeout, extracts links from HTML, and returns all discovered URLs with their depth.", starterCode:"package main\n\nimport (\n  \"context\"\n  \"sync\"\n  \"golang.org/x/net/html\"\n)\n\ntype Crawler struct {\n  maxConcurrency int\n  visited        sync.Map\n  sem            chan struct{}\n}\n\nfunc NewCrawler(maxConcurrency int) *Crawler {\n  return &Crawler{\n    maxConcurrency: maxConcurrency,\n    sem:            make(chan struct{}, maxConcurrency),\n  }\n}\n\nfunc (c *Crawler) Crawl(ctx context.Context, startURL string, maxDepth int) []string {\n  // implement concurrent BFS crawling\n  return nil\n}" },
+    { type:"text", topic:"Go Internals", difficulty:"Hard", question:"Explain Go's memory model and garbage collector. How does escape analysis work and how does it affect heap vs stack allocation? What causes goroutine leaks and how do you detect them with pprof? Explain interface internals (iface vs eface)." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a high-performance Go service that handles 200,000 requests per second: HTTP/2 with net/http vs fasthttp, connection pooling, struct pooling with sync.Pool, zero-allocation patterns, GOMAXPROCS tuning, and profiling strategy for production latency p99 <10ms." },
+    { type:"code", topic:"Error Handling & Interfaces", difficulty:"Medium", question:"Implement a robust HTTP middleware chain in Go: request ID injection, structured logging (zerolog/zap), rate limiting using token bucket algorithm, circuit breaker pattern, and graceful shutdown with context propagation. Use idiomatic Go error wrapping throughout.", starterCode:"package middleware\n\nimport (\n  \"context\"\n  \"net/http\"\n  \"sync\"\n  \"time\"\n)\n\ntype Middleware func(http.Handler) http.Handler\n\nfunc Chain(middlewares ...Middleware) Middleware {\n  // implement middleware chaining\n  return nil\n}\n\ntype TokenBucket struct {\n  // implement thread-safe token bucket\n}\n\nfunc RateLimit(rps int) Middleware {\n  // implement\n  return nil\n}\n\nfunc CircuitBreaker(threshold int, timeout time.Duration) Middleware {\n  // implement\n  return nil\n}" },
+    { type:"text", topic:"Testing & Tooling", difficulty:"Medium", question:"Describe Go testing best practices: table-driven tests, subtests (t.Run), test helpers with t.Helper(), fuzz testing (Go 1.18+), benchmarks, race detector, testcontainers-go for integration tests, and how you use go test flags in CI pipelines." },
+    { type:"code", topic:"gRPC & Protobuf", difficulty:"Hard", question:"Implement a gRPC service in Go for a real-time chat application: bidirectional streaming for messages, unary RPC for user auth, server-side streaming for history, interceptors for auth/logging, and a graceful shutdown that waits for in-flight streams to complete.", starterCode:"// chat.proto defines: ChatService with SendMessage, GetHistory, Connect\npackage main\n\nimport (\n  \"google.golang.org/grpc\"\n  pb \"your/proto/chat\"\n)\n\ntype chatServer struct {\n  pb.UnimplementedChatServiceServer\n  // add fields\n}\n\nfunc (s *chatServer) Connect(stream pb.ChatService_ConnectServer) error {\n  // implement bidirectional streaming\n  return nil\n}\n\nfunc authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {\n  // implement JWT validation\n  return handler(ctx, req)\n}" },
+    { type:"text", topic:"Modules & Architecture", difficulty:"Medium", question:"Explain Go module system, workspace mode (go.work), and dependency management best practices. How do you structure a large Go project (standard layout vs flat)? Describe your approach to dependency injection in Go without a DI framework." },
+  ],
+
+  "Rust": [
+    { type:"text", topic:"Ownership & Borrowing", difficulty:"Medium", question:"Explain Rust's ownership system: move semantics, borrowing rules, lifetimes, and the borrow checker. Why can't you have mutable and immutable references simultaneously? Describe 3 common borrow checker errors you've encountered and how you resolved them without using unsafe or excessive cloning." },
+    { type:"code", topic:"Traits & Generics", difficulty:"Hard", question:"Implement a generic, thread-safe event bus using Rust traits and generics. It should: allow subscribers to register closures for specific event types, dispatch events to all subscribers, support async handlers using tokio, and use Arc<Mutex<>> appropriately without deadlocks.", starterCode:"use std::collections::HashMap;\nuse std::sync::{Arc, Mutex};\nuse tokio::sync::broadcast;\n\ntrait Event: Clone + Send + 'static {}\n\nstruct EventBus<E: Event> {\n  // implement with broadcast channels or handler registry\n}\n\nimpl<E: Event> EventBus<E> {\n  pub fn new() -> Self { todo!() }\n  pub fn subscribe(&self, handler: impl Fn(E) + Send + 'static) { todo!() }\n  pub async fn publish(&self, event: E) { todo!() }\n}" },
+    { type:"text", topic:"Async Rust", difficulty:"Hard", question:"Explain how async/await works in Rust: Futures, the Poll trait, pin and Unpin, wakers, and the executor model. Compare tokio, async-std, and smol runtimes. What are the pitfalls of async Rust (holding locks across await points, blocking in async context, cancellation safety)?" },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a high-performance HTTP proxy in Rust using tokio and hyper that handles TLS termination, connection pooling, dynamic upstream selection, request/response transformation, and serves 1 million req/s on a single machine. Discuss zero-copy techniques and allocation strategies." },
+    { type:"code", topic:"Error Handling", difficulty:"Medium", question:"Build a Rust CLI tool that reads, validates, and transforms CSV data: use thiserror for custom error types, anyhow for application errors, rayon for parallel processing of rows, serde for deserialization, and output as JSON. Handle malformed rows gracefully with detailed error reporting.", starterCode:"use anyhow::{Context, Result};\nuse rayon::prelude::*;\nuse serde::{Deserialize, Serialize};\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\nenum TransformError {\n  #[error(\"Invalid field '{field}': {reason}\")]\n  InvalidField { field: String, reason: String },\n  // add more variants\n}\n\n#[derive(Deserialize)]\nstruct InputRecord {\n  // define fields\n}\n\n#[derive(Serialize)]\nstruct OutputRecord {\n  // define transformed fields\n}\n\nfn transform(record: InputRecord) -> Result<OutputRecord, TransformError> {\n  // implement\n  todo!()\n}" },
+    { type:"text", topic:"Memory & Performance", difficulty:"Hard", question:"Explain Rust's memory layout: stack vs heap, Box<T>, Rc<T>, Arc<T>, and when to use each. How do you avoid heap allocations in hot paths? Explain the Arena pattern, object pools, and how you'd use unsafe to implement a custom allocator for performance-critical code." },
+    { type:"code", topic:"Concurrency", difficulty:"Hard", question:"Implement a lock-free, MPSC (multi-producer, single-consumer) queue in Rust using atomics. Use Ordering correctly (Relaxed, Acquire, Release, SeqCst), avoid the ABA problem, and benchmark against std::sync::mpsc. Show unsafe usage is sound.", starterCode:"use std::sync::atomic::{AtomicPtr, Ordering};\nuse std::ptr;\n\nstruct Node<T> {\n  data: Option<T>,\n  next: AtomicPtr<Node<T>>,\n}\n\npub struct MpscQueue<T> {\n  // implement lock-free queue\n}\n\nimpl<T> MpscQueue<T> {\n  pub fn new() -> Self { todo!() }\n  pub fn push(&self, value: T) { todo!() } // safe to call from multiple threads\n  pub fn pop(&mut self) -> Option<T> { todo!() } // single consumer\n}" },
+    { type:"text", topic:"Web & Systems", difficulty:"Medium", question:"Compare Rust web frameworks: Actix-web, Axum, Warp, and Rocket. What are the tradeoffs? How do you structure a production Rust web service with: middleware tower layers, database pool (sqlx), configuration management, graceful shutdown, and OpenTelemetry instrumentation?" },
+  ],
+
+  "Kotlin": [
+    { type:"text", topic:"Kotlin Coroutines", difficulty:"Medium", question:"Explain Kotlin coroutines: suspend functions, CoroutineScope, CoroutineContext, Dispatchers, and structured concurrency. How do coroutines differ from threads? Explain the supervisor scope and how it handles child coroutine failures. Describe a coroutine-related bug you debugged." },
+    { type:"code", topic:"Flow & Reactive", difficulty:"Hard", question:"Implement a real-time stock price monitoring system using Kotlin Flow: a SharedFlow as event bus, StateFlow for current prices, combine multiple stock streams, apply debounce and distinctUntilChanged, handle backpressure, and expose as a cold flow that auto-cancels upstream on unsubscribe.", starterCode:"import kotlinx.coroutines.flow.*\nimport kotlinx.coroutines.*\n\ndata class StockPrice(val symbol: String, val price: Double, val timestamp: Long)\n\nclass StockMonitor {\n  private val _priceUpdates = MutableSharedFlow<StockPrice>(replay = 1)\n\n  fun observeStock(symbol: String): Flow<StockPrice> {\n    // filter, debounce, distinctUntilChanged\n    return emptyFlow()\n  }\n\n  fun observePortfolio(symbols: List<String>): Flow<Map<String, StockPrice>> {\n    // combine multiple stock flows\n    return emptyFlow()\n  }\n}" },
+    { type:"text", topic:"Android Architecture", difficulty:"Hard", question:"Explain Jetpack Compose's recomposition model: how does Compose decide what to recompose, how do remember, derivedStateOf, and key() work? Describe the Compose state hoisting pattern and how it integrates with ViewModel and UDF (Unidirectional Data Flow)." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design an offline-first Android app for a delivery driver: optimistic updates for delivery confirmations, background sync with WorkManager, conflict resolution when online, geofencing for automated status updates, efficient battery usage, and handling flaky 2G connectivity." },
+    { type:"code", topic:"DSL & Extension Functions", difficulty:"Medium", question:"Build a type-safe Kotlin DSL for constructing HTML: support tags (html, head, body, div, p, a), attributes (class, id, href), nesting, and text content. Use operator overloading and extension functions. The DSL should be usable without any string concatenation.", starterCode:"class Tag(val name: String) {\n  private val children = mutableListOf<Any>()\n  private val attributes = mutableMapOf<String, String>()\n\n  operator fun String.unaryPlus() { children.add(this) }\n\n  fun render(indent: Int = 0): String {\n    // implement recursive rendering\n    return \"\"\n  }\n}\n\nfun html(block: Tag.() -> Unit): Tag = Tag(\"html\").apply(block)\nfun Tag.body(block: Tag.() -> Unit): Tag = Tag(\"body\").apply(block).also { /* add as child */ }\n// implement div, p, a, head" },
+    { type:"text", topic:"Multiplatform", difficulty:"Hard", question:"Explain Kotlin Multiplatform (KMP) architecture: expect/actual mechanism, shared business logic, platform-specific implementations. How do you share: networking (Ktor), database (SQLDelight), state management across Android, iOS, and web? What are the current limitations?" },
+    { type:"code", topic:"Testing", difficulty:"Medium", question:"Write comprehensive tests for a Kotlin suspend function that fetches paginated data: use turbine for Flow testing, MockK for mocking coroutine functions, runTest for coroutine tests, test error states and retry logic, and use advanceTimeBy for testing debounce behavior.", starterCode:"import app.cash.turbine.test\nimport io.mockk.*\nimport kotlinx.coroutines.test.*\nimport org.junit.Test\n\nclass DataRepositoryTest {\n  private val api = mockk<DataApi>()\n  private val repository = DataRepository(api)\n\n  @Test\n  fun `should emit paginated data correctly`() = runTest {\n    // mock api responses\n    coEvery { api.fetchPage(any()) } returns ...\n\n    repository.getPaginatedData().test {\n      // assert items with turbine\n    }\n  }\n\n  @Test\n  fun `should retry on network error`() = runTest {\n    // implement\n  }\n}" },
+    { type:"text", topic:"Performance", difficulty:"Medium", question:"Describe Android performance optimization with Kotlin: identifying jank with Android Studio Profiler, lazy initialization, avoiding allocations in hot paths, Baseline Profiles, R8 optimization hints, and how kotlinx.serialization compares to Gson/Moshi for performance." },
+  ],
+
+  "Swift": [
+    { type:"text", topic:"Swift Concurrency", difficulty:"Medium", question:"Explain Swift's structured concurrency: async/await, actors, Task, TaskGroup, and how they prevent data races. How does the Swift runtime scheduler differ from GCD? Explain MainActor, nonisolated, and Sendable protocol. Describe a concurrency bug you solved by switching from GCD to actors." },
+    { type:"code", topic:"Protocol-Oriented Programming", difficulty:"Hard", question:"Design a type-safe networking layer in Swift using protocols, generics, and async/await. Support: request building, response decoding (Codable), retry logic, authentication token injection, request mocking for tests, and cancellation with structured concurrency.", starterCode:"import Foundation\n\nprotocol APIRequest {\n  associatedtype Response: Decodable\n  var path: String { get }\n  var method: HTTPMethod { get }\n  var parameters: [String: Any]? { get }\n}\n\nprotocol NetworkSession {\n  func data(for request: URLRequest) async throws -> (Data, URLResponse)\n}\n\nactor APIClient {\n  private let session: NetworkSession\n  private let baseURL: URL\n  private var authToken: String?\n\n  init(baseURL: URL, session: NetworkSession = URLSession.shared) {\n    self.baseURL = baseURL\n    self.session = session\n  }\n\n  func send<R: APIRequest>(_ request: R) async throws -> R.Response {\n    // implement with retry and auth injection\n    throw APIError.notImplemented\n  }\n}" },
+    { type:"text", topic:"SwiftUI & Combine", difficulty:"Hard", question:"Explain SwiftUI's rendering model: what triggers a view update, how @State, @StateObject, @ObservedObject, @EnvironmentObject, and @Binding differ. How does SwiftUI's diffing compare to React's? Describe performance issues you've encountered with List/LazyVStack and how you solved them." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design an iOS app architecture for a banking application: VIPER vs TCA (The Composable Architecture) vs MVVM+Coordinator, offline persistence with Core Data + CloudKit sync, biometric authentication, App Clips for quick access, Widget extensions, and App Store review compliance." },
+    { type:"code", topic:"Memory Management", difficulty:"Medium", question:"Identify and fix all retain cycles in the following Swift code using weak/unowned references, then rewrite it using modern async/await to eliminate completion handler callbacks and demonstrate how structured concurrency prevents the same issues.", starterCode:"class ImageLoader {\n  var completion: ((UIImage?) -> Void)?\n  var session: URLSession = .shared\n\n  func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {\n    self.completion = completion  // RETAIN CYCLE HERE\n    session.dataTask(with: url) { [self] data, _, _ in  // STRONG CAPTURE\n      let image = data.flatMap { UIImage(data: $0) }\n      self.completion?(image)\n    }.resume()\n  }\n}\n\n// Part 1: Fix retain cycles\n// Part 2: Rewrite with async/await\nasync func loadImage(from url: URL) throws -> UIImage { }" },
+    { type:"text", topic:"Testing", difficulty:"Medium", question:"Describe iOS testing best practices: XCTest unit tests, UI tests with XCUITest, snapshot testing, async test expectations, dependency injection for testability, mocking URLSession, testing SwiftUI views with ViewInspector, and measuring performance with XCTMetric." },
+    { type:"code", topic:"Advanced Swift", difficulty:"Hard", question:"Implement a property wrapper @Validated<T> that validates a value against rules, a @Clamped<T> that constrains numeric values to a range, and a @Published replacement that debounces updates and skips equal values. Show how to compose them.", starterCode:"import Combine\nimport Foundation\n\n@propertyWrapper\nstruct Validated<Value> {\n  private var value: Value\n  private let rules: [(Value) -> Bool]\n  private(set) var isValid: Bool = false\n\n  var wrappedValue: Value {\n    get { value }\n    set {\n      value = newValue\n      isValid = rules.allSatisfy { $0(newValue) }\n    }\n  }\n\n  init(wrappedValue: Value, rules: (Value) -> Bool...) {\n    // implement\n  }\n}\n\n// Also implement @Clamped and @DebouncedPublished" },
+    { type:"text", topic:"Performance & Instruments", difficulty:"Hard", question:"Describe using Instruments to diagnose iOS performance issues: Time Profiler for CPU, Allocations for memory leaks and abandoned memory, Core Data template, Network template, and Energy Log. Walk through diagnosing a real performance regression using Instruments." },
+  ],
+
+  "Vue.js": [
+    { type:"text", topic:"Vue 3 Composition API", difficulty:"Medium", question:"Compare Vue 3's Composition API vs Options API. Explain ref vs reactive, computed, watchEffect vs watch, and the Composables pattern. How does the Composition API solve code organization issues in large components? Give a real example of a composable you extracted." },
+    { type:"code", topic:"State Management", difficulty:"Hard", question:"Build a Pinia store for a multi-step form with: local draft persistence (localStorage), server sync, optimistic UI, undo/redo history using the memento pattern, and form validation state. Expose composables that wrap the store for component use.", starterCode:"import { defineStore } from 'pinia';\nimport { ref, computed } from 'vue';\n\nexport const useFormStore = defineStore('multiStepForm', () => {\n  const currentStep = ref(0);\n  const formData = ref({});\n  const history = ref([]);\n  const isDirty = ref(false);\n\n  // implement:\n  // - advance/retreat steps\n  // - save draft to localStorage\n  // - undo/redo\n  // - optimistic server sync\n  // - validation per step\n\n  return { currentStep, formData, /* expose actions */ };\n});" },
+    { type:"text", topic:"Performance", difficulty:"Hard", question:"Describe Vue 3 performance optimization: v-memo, shallowRef vs ref for large objects, virtual scrolling with vue-virtual-scroller, component lazy loading, async components with Suspense, avoiding unnecessary watchers, and using the Vue DevTools performance tab to find bottlenecks." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a Vue 3 micro-frontend architecture for an enterprise application with 10 teams. Cover: Module Federation with Vite, shared design system (Storybook), cross-app state sharing, routing federation, independent deployments, and how you'd handle breaking changes between micro-frontends." },
+    { type:"code", topic:"Custom Directives & Plugins", difficulty:"Medium", question:"Create a Vue 3 plugin that provides: a v-tooltip directive with smart positioning (auto-flip), a v-loading directive that shows a skeleton overlay, a v-permission directive for RBAC, and a useInfiniteScroll composable. The plugin should be tree-shakeable.", starterCode:"// plugins/uikit.js\nimport type { App, DirectiveBinding } from 'vue';\n\nconst vTooltip = {\n  mounted(el: HTMLElement, binding: DirectiveBinding) {\n    // implement with smart positioning\n  },\n  unmounted(el: HTMLElement) { /* cleanup */ }\n};\n\nconst vLoading = {\n  // implement skeleton overlay\n};\n\nexport function useInfiniteScroll(callback: () => Promise<void>, options = {}) {\n  // implement IntersectionObserver-based infinite scroll\n}\n\nexport default {\n  install(app: App) {\n    app.directive('tooltip', vTooltip);\n    // register others\n  }\n};" },
+    { type:"text", topic:"Testing & SSR", difficulty:"Medium", question:"Describe testing Vue 3 components with Vitest and Vue Test Utils: mounting strategies (mount vs shallowMount), testing composables in isolation, mocking Pinia stores, testing async components, and snapshot testing. How do you handle Nuxt.js SSR-specific testing challenges?" },
+    { type:"code", topic:"Reactivity System", difficulty:"Hard", question:"Implement a simplified version of Vue 3's reactivity system from scratch: reactive(), ref(), computed(), watchEffect(), and effect(). Show how dependency tracking works using a global effect stack and how computed values are lazily evaluated and cached.", starterCode:"let activeEffect = null;\n\nfunction track(target, key) {\n  // collect dependency\n}\n\nfunction trigger(target, key) {\n  // run dependent effects\n}\n\nfunction reactive(obj) {\n  return new Proxy(obj, {\n    get(target, key) { track(target, key); return target[key]; },\n    set(target, key, value) { target[key] = value; trigger(target, key); return true; }\n  });\n}\n\nfunction ref(value) { /* implement */ }\nfunction computed(getter) { /* implement lazy + cached */ }\nfunction watchEffect(fn) { /* implement effect tracking */ }" },
+    { type:"text", topic:"Architecture", difficulty:"Medium", question:"Explain Nuxt 3's features: auto-imports, file-based routing, server routes (Nitro), server components, useFetch vs useAsyncData, hybrid rendering (SSR/SSG/ISR), and how you'd architect a high-traffic e-commerce site with Nuxt 3." },
+  ],
+
+  "C++": [
+    { type:"text", topic:"Modern C++ Features", difficulty:"Medium", question:"Explain C++17/20 features you use in production: structured bindings, if constexpr, std::optional/variant/any, concepts, ranges, coroutines, and modules. Give examples of how modern C++ reduced boilerplate or prevented bugs in your codebase." },
+    { type:"code", topic:"Memory Management", difficulty:"Hard", question:"Implement a custom memory allocator using a pool allocator design: pre-allocate a large block, divide into fixed-size chunks, maintain a free list, support alloc() and dealloc() in O(1), handle alignment requirements, and be thread-safe using atomic operations.", starterCode:"#include <cstddef>\n#include <atomic>\n#include <memory>\n\ntemplate<typename T, std::size_t PoolSize = 1024>\nclass PoolAllocator {\npublic:\n  using value_type = T;\n\n  PoolAllocator();\n  ~PoolAllocator();\n\n  T* allocate(std::size_t n = 1);\n  void deallocate(T* ptr, std::size_t n = 1) noexcept;\n\n  // thread-safe free list using atomic\nprivate:\n  alignas(T) std::byte pool_[sizeof(T) * PoolSize];\n  // implement free list\n};" },
+    { type:"text", topic:"Templates & Metaprogramming", difficulty:"Hard", question:"Explain C++ template metaprogramming: SFINAE, enable_if, type traits, variadic templates, fold expressions, and constexpr if. How do you use concepts (C++20) to replace SFINAE? Show a practical example like a type-safe unit system or compile-time JSON parser." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a lock-free, high-throughput order matching engine in C++ for a financial exchange: lock-free order book using atomic compare-and-swap, cache-line aware data structures, NUMA topology awareness, io_uring for network I/O, and achieving sub-microsecond latency for 10 million orders/second." },
+    { type:"code", topic:"Smart Pointers & RAII", difficulty:"Medium", question:"Implement a resource manager class using RAII: manages a pool of database connections, supports shared ownership (shared_ptr-like reference counting), weak references to detect expired handles, and custom deleters. Ensure exception safety and no memory leaks under any code path.", starterCode:"#include <memory>\n#include <functional>\n#include <atomic>\n\nclass DatabaseConnection {\npublic:\n  DatabaseConnection(const std::string& connStr);\n  ~DatabaseConnection();\n  void execute(const std::string& query);\n};\n\nclass ConnectionPool {\npublic:\n  // shared ownership, weak references for expired handle detection\n  using Handle = std::shared_ptr<DatabaseConnection>;\n  using WeakHandle = std::weak_ptr<DatabaseConnection>;\n\n  explicit ConnectionPool(size_t maxConnections);\n  Handle acquire();\n  // implement RAII connection release\n};" },
+    { type:"text", topic:"Concurrency", difficulty:"Hard", question:"Compare C++ concurrency primitives: std::thread, std::async/future, std::jthread (C++20), coroutines, and hardware_concurrency. Explain memory ordering (relaxed, acquire, release, seq_cst) in std::atomic. Describe a lock-free algorithm you've implemented and the ABA problem solution." },
+    { type:"code", topic:"STL & Algorithms", difficulty:"Medium", question:"Implement a parallel merge sort using C++17 parallel algorithms (std::sort with execution policies) and compare it with std::thread-based implementation. Analyze cache performance using hardware prefetching concepts and discuss when parallel sort outperforms sequential.", starterCode:"#include <algorithm>\n#include <execution>\n#include <thread>\n#include <vector>\n#include <future>\n\n// Version 1: C++17 parallel algorithms\ntemplate<typename T>\nvoid parallel_sort_v1(std::vector<T>& data) {\n  // use std::sort with execution policy\n}\n\n// Version 2: Manual thread-based merge sort\ntemplate<typename T>\nvoid parallel_merge_sort(std::vector<T>& data, size_t threshold = 10000) {\n  // implement recursive parallel merge sort\n}" },
+    { type:"text", topic:"Performance", difficulty:"Hard", question:"Describe C++ performance optimization techniques: SIMD intrinsics, branch prediction hints (__builtin_expect), cache-friendly data structures (SoA vs AoS), false sharing prevention, profile-guided optimization (PGO), link-time optimization (LTO), and using perf/VTune to identify bottlenecks." },
+  ],
+
+  "ISO42001": [
+    { type:"text", topic:"AI Management System", difficulty:"Medium", question:"Explain the purpose and scope of ISO/IEC 42001:2023. What distinguishes it from other AI frameworks like NIST AI RMF or the EU AI Act? How does it integrate with ISO 27001 and ISO 9001? Describe the key clauses and their applicability to your organization." },
+    { type:"text", topic:"Risk Assessment", difficulty:"Hard", question:"Describe how to conduct an AI-specific risk assessment under ISO 42001. What AI-specific risks must be identified (bias, explainability, data quality, model drift, adversarial attacks)? How do risk controls differ between high-risk and limited-risk AI systems under the EU AI Act alignment?" },
+    { type:"text", topic:"Implementation", difficulty:"Medium", question:"Walk through implementing an ISO 42001 AIMS (AI Management System) in an organization that already has ISO 27001 certified. What new controls, policies, and procedures are required? How do you handle AI system inventory, impact assessments, and supplier AI risk management?" },
+    { type:"voice", topic:"Audit & Certification", difficulty:"Hard", question:"Describe the ISO 42001 certification process: gap analysis, documentation requirements, internal audit program, Stage 1 and Stage 2 certification audits, nonconformity handling, and surveillance audits. What are the most common nonconformities found during initial certification?" },
+    { type:"text", topic:"AI Ethics & Governance", difficulty:"Hard", question:"How does ISO 42001 address AI ethics principles: fairness, transparency, accountability, privacy, and human oversight? Describe how you would implement an AI ethics review board, algorithmic impact assessments, and explainability requirements for a financial services AI system." },
+  ],
+
+  "ISO27001": [
+    { type:"text", topic:"ISMS Framework", difficulty:"Medium", question:"Explain the ISO 27001:2022 structure: Annex SL high-level structure, the Plan-Do-Check-Act cycle, mandatory clauses (4-10), and Annex A controls (now organized into 4 themes). What are the major differences between 2013 and 2022 versions? Which new controls address cloud and DevSecOps?" },
+    { type:"text", topic:"Risk Management", difficulty:"Hard", question:"Describe a comprehensive ISO 27001 risk assessment process: asset identification, threat/vulnerability analysis, risk calculation methodologies (FAIR, NIST), risk acceptance criteria, Statement of Applicability (SoA), and risk treatment plan. How do you handle residual risk sign-off?" },
+    { type:"code", topic:"Technical Controls", difficulty:"Hard", question:"Design a technical implementation of Annex A controls for a cloud-native environment: identity and access management (zero-trust, PAM), encryption at rest and in transit, vulnerability management pipeline, SIEM integration, and automated compliance checks using policy-as-code.", starterCode:"# Terraform + OPA policy-as-code for ISO 27001 Annex A controls\n# Implement checks for:\n# - A.8.3 Information access restriction (IAM least privilege)\n# - A.8.24 Use of cryptography (encryption requirements)\n# - A.8.8 Technical vulnerability management\n# - A.8.16 Monitoring activities (SIEM integration)\n\n# Example OPA policy:\npackage iso27001\n\n# Deny IAM policies with wildcard resources\ndeny[msg] {\n  resource := input.resources[_]\n  # implement\n}" },
+    { type:"voice", topic:"Audit Preparation", difficulty:"Hard", question:"Your organization has a Stage 2 ISO 27001 certification audit in 6 weeks. Walk through your preparation plan: documentation review, internal audit scope and findings, management review agenda, evidence collection for each clause, and how you'd handle a critical finding discovered during pre-audit." },
+    { type:"text", topic:"Incident Management", difficulty:"Medium", question:"Describe an ISO 27001-compliant information security incident management process: detection and reporting channels, severity classification matrix, response procedures (containment, eradication, recovery), forensic evidence preservation, regulatory notification timelines (GDPR 72-hour rule), and post-incident review process." },
+  ],
+
+  "ISO9001": [
+    { type:"text", topic:"QMS Framework", difficulty:"Medium", question:"Explain ISO 9001:2015 structure and the risk-based thinking approach. How does it differ from the 2008 version? What are the 7 quality management principles and how do they manifest in Clause requirements? Describe how customer focus is embedded throughout the standard." },
+    { type:"text", topic:"Process Approach", difficulty:"Hard", question:"Describe implementing the process approach in a software development company. Map your core processes (design, development, testing, delivery, support), define process owners, KPIs, inputs/outputs, and control mechanisms. How do you handle interaction between processes and manage outsourced processes?" },
+    { type:"text", topic:"Corrective Actions & CAPA", difficulty:"Medium", question:"Explain the nonconformity and corrective action (CAPA) process under ISO 9001. How do you conduct effective root cause analysis (5-Why, Fishbone, FMEA)? Describe how you measure effectiveness of corrective actions and prevent recurrence. Give an example from software delivery." },
+    { type:"voice", topic:"Customer Satisfaction", difficulty:"Hard", question:"How do you measure and monitor customer satisfaction under ISO 9001? Describe the full feedback loop: VOC (Voice of Customer) collection methods, analysis, linking to process improvements, and reporting to top management. How do you handle customer complaints to turn them into retention opportunities?" },
+    { type:"text", topic:"Management Review & KPIs", difficulty:"Medium", question:"Design a management review program for ISO 9001 compliance: define required inputs (audit results, customer feedback, process performance, risks/opportunities), outputs (decisions and actions), frequency, and how you present quality data to drive strategic decisions. What KPIs do you track for a software company?" },
+  ],
+
+  "Risk Management": [
+    { type:"text", topic:"Risk Frameworks", difficulty:"Medium", question:"Compare major risk management frameworks: ISO 31000, COSO ERM, NIST RMF, and FAIR. What are the strengths and weaknesses of each? How would you select and tailor a framework for a fintech startup vs a large bank? What does 'risk appetite' mean operationally?" },
+    { type:"text", topic:"Risk Quantification", difficulty:"Hard", question:"Explain FAIR (Factor Analysis of Information Risk) methodology for quantifying cyber risk in financial terms. Walk through estimating Loss Event Frequency (TEF × V) and Loss Magnitude (SLEF, PLEF × LM). How do you present probabilistic risk ranges to non-technical executives?" },
+    { type:"text", topic:"Risk Assessment Process", difficulty:"Medium", question:"Describe conducting an enterprise risk assessment for a digital transformation initiative: stakeholder interviews, risk identification workshops, heat map construction, treatment strategy (accept/avoid/transfer/mitigate), risk register maintenance, and escalation triggers. How do you ensure risks stay current?" },
+    { type:"voice", topic:"Crisis Management", difficulty:"Hard", question:"A critical third-party supplier has a ransomware attack affecting your cloud infrastructure. Walk through your risk management response: immediate containment, business continuity activation, regulatory notification obligations, supplier risk remediation, and post-incident risk register updates. What did your third-party risk program miss?" },
+    { type:"text", topic:"Operational Risk", difficulty:"Hard", question:"Explain operational risk management for a financial institution under Basel III. Cover: the Standardized Measurement Approach (SMA), operational loss event categories, loss data collection, key risk indicators (KRIs), RCSA (Risk and Control Self-Assessment), and scenario analysis. How does this link to capital adequacy requirements?" },
+  ],
+
+  "CMMI": [
+    { type:"text", topic:"CMMI Model", difficulty:"Medium", question:"Explain the CMMI 2.0 model: practice areas, capability levels (0-5) vs maturity levels (1-5), and the CMMI for Development vs Services vs Supplier Management views. How does CMMI 2.0 differ from CMMI 1.3? What is the CMMI Institute appraisal process (SCAMPI A, B, C)?" },
+    { type:"text", topic:"Process Improvement", difficulty:"Hard", question:"Describe implementing CMMI Level 3 in a 200-person software development organization. What are the 18 required process areas? How do you tailor generic practices, build organizational process assets, handle resistance from development teams, and demonstrate ROI from the improvement initiative?" },
+    { type:"text", topic:"Measurement & Analysis", difficulty:"Medium", question:"How does CMMI address measurement and analysis? Define a measurement program: identify business objectives, derive measurement goals (GQM approach), define measures and baselines, collect and analyze data, and use it to drive process decisions. What metrics do you track for a ML model development team?" },
+    { type:"voice", topic:"Appraisal Preparation", difficulty:"Hard", question:"Your organization is preparing for a SCAMPI A appraisal to achieve CMMI Level 3. Walk through a 6-month preparation plan: gap assessment, process documentation, artifact collection, practice implementation verification, lead appraiser coordination, and team interview preparation strategies." },
+    { type:"text", topic:"Integration with Agile", difficulty:"Hard", question:"How do you reconcile CMMI with Agile/Scrum? Explain how Scrum ceremonies and artifacts satisfy CMMI practice areas (Project Planning, Project Monitoring & Control, Requirements Management). What is CMMI for Agile (CMMI+Agile)? Describe an organization that successfully combined both." },
+  ],
+
+  "Mainframes AS400": [
+    { type:"text", topic:"AS400 Architecture", difficulty:"Medium", question:"Explain the IBM AS400 (IBM i) architecture: the single-level store concept, Technology-Independent Machine Interface (TAMI), integrated database (DB2 for i), object-based security model, and how the system differs fundamentally from Unix/Windows in handling storage, security, and programs." },
+    { type:"code", topic:"RPG Programming", difficulty:"Hard", question:"Write an RPG IV (ILE RPG) program that reads a customer master file, calculates aging buckets for accounts receivable (0-30, 31-60, 61-90, 90+ days), updates a summary file, and writes exception records to a separate file. Use service programs and modern RPG free-format syntax.", starterCode:"**FREE\n// Accounts Receivable Aging Program\n// Files: CUSTMAST (Customer Master)\n//        ARDETAIL (AR Detail with due dates)\n//        ARSUMMRY (Summary output)\n//        AREXCEPT (Exception records)\n\nDCL-F CUSTMAST DISK(*EXT) USAGE(*INPUT);\nDCL-F ARDETAIL DISK(*EXT) USAGE(*INPUT);\nDCL-F ARSUMMRY DISK(*EXT) USAGE(*UPDATE);\n\nDCL-DS ArSummary;\n  bucket_0_30 PACKED(15:2);\n  bucket_31_60 PACKED(15:2);\n  bucket_61_90 PACKED(15:2);\n  bucket_over_90 PACKED(15:2);\nEND-DS;\n\n// Implement main logic, aging calculation, and file I/O" },
+    { type:"text", topic:"DB2 for i", difficulty:"Hard", question:"Describe advanced DB2 for i features: logical files vs SQL views, commitment control and journaling, row-level locking, distributed database with DRDA, SQL stored procedures and triggers, and performance tuning with Visual Explain and the Performance Management APIs." },
+    { type:"voice", topic:"System Design", difficulty:"Hard", question:"Design a modernization strategy for a 20-year-old AS400 application that processes 5 million insurance transactions daily. Cover: exposing RPG business logic as REST APIs (IWS/Rational), database modernization, integrating with modern microservices, DevOps practices for COBOL/RPG, and risk management during phased migration." },
+    { type:"text", topic:"CL & Operations", difficulty:"Medium", question:"Explain Control Language (CL) scripting on IBM i: CL programs vs REXX, job scheduling with Job Scheduler/CRON, subsystem management, save/restore procedures (SAVLIB, RSTLIB), output queues and spooled files, and authority management (object authority vs user profiles)." },
+  ],
+};
+
+// ─── SKILL CATEGORY MAPPING ─────────────────────────────────────────────────
+// For skills not in the bank above, map to closest category
+const SKILL_ALIASES = {
+  "SQL": "SQL", "NoSQL": "NoSQL", "Java": "Java", "Python": "Python",
+  "React": "React", "Angular": "Angular", "Spring Boot": "Spring Boot",
+  "Node.js": "Node.js", "AWS": "AWS", "DevOps": "DevOps",
+  "Data Science": "Data Science", "Flutter": "Flutter", "Go": "Go",
+  "Rust": "Rust", "Kotlin": "Kotlin", "Swift": "Swift", "Vue.js": "Vue.js",
+  "C++": "C++", "Microservices": "Microservices",
+  "ISO42001": "ISO42001", "ISO27001": "ISO27001", "ISO9001": "ISO9001",
+  "Risk Management": "Risk Management", "CMMI": "CMMI",
+  "Mainframes AS400": "Mainframes AS400",
+};
+
+// ─── QUESTION RANDOMIZATION ───────────────────────────────────────────────────
+function getRandomFallbackQuestions(skill, experience) {
+  const bankKey = SKILL_ALIASES[skill] || null;
+  const bank = bankKey ? SKILL_QUESTION_BANK[bankKey] : null;
+
+  if (!bank || bank.length < 5) {
+    // Generic fallback for skills without a bank
+    return [
+      { id:1, type:"text", topic:skill, difficulty:"Medium",
+        question:`Explain the core concepts and architecture of ${skill}. How have you applied it in production? What are its main advantages and common pitfalls?` },
+      { id:2, type:"code", topic:"Algorithms", difficulty:"Hard",
+        question:"Implement a function that finds all pairs in an array summing to a target value. Optimize for O(n) time complexity using a HashMap approach.",
+        starterCode:"function findPairs(arr, target) {\n  const seen = new Map();\n  const pairs = [];\n  // implement O(n) solution\n  return pairs;\n}" },
+      { id:3, type:"voice", topic:"System Design", difficulty:"Hard",
+        question:`Design a scalable ${skill} system for 10,000 requests per second. Discuss architecture decisions, data storage, caching strategy, and failure handling.` },
+      { id:4, type:"text", topic:"Best Practices", difficulty:"Medium",
+        question:`What are the top 5 best practices for production ${skill} development? Describe a real mistake you made and what you learned from it.` },
+      { id:5, type:"code", topic:skill, difficulty:"Medium",
+        question:`Implement a common design pattern relevant to ${skill} (e.g., Observer, Factory, or Singleton) with a practical use case from your domain.`,
+        starterCode:`// Implement a ${skill}-relevant design pattern\n// Add your code here\n` },
+    ];
+  }
+
+  // Shuffle and pick 5, ensuring we have at least one of each type if possible
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+
+  // Try to pick a mix: at least 1 text, 1 code, 1 voice, fill rest randomly
+  const byType = { text: [], code: [], voice: [] };
+  shuffled.forEach(q => byType[q.type]?.push(q));
+
+  const selected = [];
+  if (byType.voice.length)  selected.push(byType.voice[0]);
+  if (byType.code.length)   selected.push(byType.code[0]);
+  if (byType.code.length>1) selected.push(byType.code[1]);
+  if (byType.text.length)   selected.push(byType.text[0]);
+  if (byType.text.length>1) selected.push(byType.text[1]);
+
+  // Fill remaining slots from shuffled pool (not already selected)
+  const selectedIds = new Set(selected.map(q => q.question));
+  for (const q of shuffled) {
+    if (selected.length >= 5) break;
+    if (!selectedIds.has(q.question)) { selected.push(q); selectedIds.add(q.question); }
+  }
+
+  // Adjust difficulty based on experience
+  const sorted = selected.slice(0, 5).map((q, i) => ({
+    ...q,
+    id: i + 1,
+    difficulty: experience <= 2
+      ? (i < 2 ? "Easy" : q.difficulty)
+      : experience >= 7
+      ? (i > 2 ? "Hard" : q.difficulty)
+      : q.difficulty,
+  }));
+
+  return sorted;
+}
+
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 const clamp   = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
 const rand    = (lo,hi)   => lo + Math.random()*(hi-lo);
@@ -85,14 +418,23 @@ async function callGemini(prompt, maxTok=1200) {
   const res = await fetch(GEMINI_URL,{
     method:"POST", headers:{"Content-Type":"application/json"},
     body:JSON.stringify({ contents:[{parts:[{text:prompt}]}],
-      generationConfig:{maxOutputTokens:maxTok,temperature:0.7} }),
+      generationConfig:{maxOutputTokens:maxTok,temperature:0.85} }),
   });
   const d = await res.json();
   return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
+
 function parseJSON(raw) {
-  try { return JSON.parse(raw.replace(/```json|```/g,"").trim()); }
-  catch { return null; }
+  if (!raw) return null;
+  // Strip markdown code blocks
+  let cleaned = raw.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+  // Extract JSON array
+  const arrMatch = cleaned.match(/\[[\s\S]*\]/);
+  if (arrMatch) {
+    try { return JSON.parse(arrMatch[0]); } catch {}
+  }
+  try { return JSON.parse(cleaned); } catch {}
+  return null;
 }
 
 // ─── SMALL COMPONENTS ─────────────────────────────────────────────────────────
@@ -342,7 +684,6 @@ function LobbyScreen({ user, onStart, onLogout }) {
   const avgScore=history.length?Math.round(avg(history.map(h=>h.score))):null;
   return <div style={{minHeight:"100vh",background:C.bg,padding:24,position:"relative",overflow:"hidden"}}>
     <BgBlobs/>
-    {/* Nav */}
     <div style={{position:"relative",zIndex:10,maxWidth:960,margin:"0 auto",
       display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:44,flexWrap:"wrap",gap:14}}>
       <div>
@@ -369,7 +710,6 @@ function LobbyScreen({ user, onStart, onLogout }) {
     </div>
 
     <div style={{position:"relative",zIndex:1,maxWidth:960,margin:"0 auto"}}>
-      {/* Feature pills */}
       <div style={{display:"flex",flexWrap:"wrap",gap:9,marginBottom:40}}>
         {FEATURES.map(f=>(
           <div key={f} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",
@@ -379,12 +719,10 @@ function LobbyScreen({ user, onStart, onLogout }) {
         ))}
       </div>
 
-      {/* Profile label */}
       <p style={{color:C.dim,fontSize:11,letterSpacing:2.5,textTransform:"uppercase",fontWeight:600,marginBottom:14}}>
         Your Interview Profile
       </p>
 
-      {/* Profile card */}
       <Card style={{marginBottom:36,border:"1px solid rgba(0,212,170,0.25)",background:"rgba(0,212,170,0.03)"}}>
         <div style={{display:"flex",alignItems:"center",gap:20,flexWrap:"wrap"}}>
           <div style={{width:68,height:68,borderRadius:16,background:"linear-gradient(135deg,#00d4aa,#0070f3)",
@@ -409,7 +747,6 @@ function LobbyScreen({ user, onStart, onLogout }) {
         </div>
       </Card>
 
-      {/* Quick test */}
       <p style={{color:C.dim,fontSize:11,letterSpacing:2.5,textTransform:"uppercase",fontWeight:600,marginBottom:14}}>
         Quick Test — Try Different Profiles
       </p>
@@ -452,7 +789,6 @@ function EmotionSidebar({ emotionState, emo, cameraOn, videoRef, scoreHistory, o
     display:"flex",flexDirection:"column",gap:12,padding:14,overflowY:"auto",
     background:"rgba(0,0,0,0.14)",flexShrink:0}}>
 
-    {/* Camera */}
     <div style={{borderRadius:14,overflow:"hidden",aspectRatio:"4/3",position:"relative",background:"#0d1117",flexShrink:0}}>
       <video ref={videoRef} autoPlay muted playsInline
         style={{width:"100%",height:"100%",objectFit:"cover",display:cameraOn?"block":"none"}}/>
@@ -470,13 +806,11 @@ function EmotionSidebar({ emotionState, emo, cameraOn, videoRef, scoreHistory, o
       </div>
     </div>
 
-    {/* Radar */}
     <Card style={{padding:12,borderRadius:14}}>
       <p style={{color:"rgba(255,255,255,0.28)",fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontWeight:600}}>Emotion Radar</p>
       <div style={{display:"flex",justifyContent:"center"}}><EmotionRadar data={emo}/></div>
     </Card>
 
-    {/* Bars */}
     <Card style={{padding:13,borderRadius:14}}>
       <p style={{color:"rgba(255,255,255,0.28)",fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:12,fontWeight:600}}>Live Metrics</p>
       {Object.entries(emo).map(([k,v])=>(
@@ -493,7 +827,6 @@ function EmotionSidebar({ emotionState, emo, cameraOn, videoRef, scoreHistory, o
       ))}
     </Card>
 
-    {/* Running score */}
     {scoreHistory.length>0&&<Card style={{padding:13,borderRadius:14}}>
       <p style={{color:"rgba(255,255,255,0.28)",fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:12,fontWeight:600}}>Running Score</p>
       <div style={{display:"flex",justifyContent:"space-around"}}>
@@ -589,7 +922,6 @@ function InterviewScreen({ candidate, onFinish }) {
 
   const videoRef=useRef(null), streamRef=useRef(null), timerRef=useRef(null), emoInterval=useRef(null), emoData=useRef({Confid:70,Tech:62,Clarity:75,Stress:32,Engage:84});
 
-  // Camera
   async function startCam(){
     try{const s=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
       streamRef.current=s; if(videoRef.current) videoRef.current.srcObject=s; setCameraOn(true);}
@@ -598,7 +930,6 @@ function InterviewScreen({ candidate, onFinish }) {
   function stopCam(){streamRef.current?.getTracks().forEach(t=>t.stop()); streamRef.current=null; setCameraOn(false);}
   function toggleCam(){cameraOn?stopCam():startCam();}
 
-  // TTS
   const speak=useCallback(text=>{
     if(!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
@@ -609,7 +940,6 @@ function InterviewScreen({ candidate, onFinish }) {
     window.speechSynthesis.speak(u);
   },[]);
 
-  // Emotion simulation
   useEffect(()=>{
     const keys=Object.keys(EMOTION_MAP);
     emoInterval.current=setInterval(()=>{
@@ -624,34 +954,65 @@ function InterviewScreen({ candidate, onFinish }) {
     return ()=>clearInterval(emoInterval.current);
   },[]);
 
-  // Generate questions
+  // ─── QUESTION GENERATION WITH GEMINI + RANDOM SKILL-SPECIFIC FALLBACK ────────
   useEffect(()=>{
-    setGenMsg(`Crafting ${candidate.skill} interview questions…`);
+    const skill = candidate.skill;
+    const exp   = candidate.experience || 0;
+    setGenMsg(`Crafting ${skill}-specific questions with AI…`);
+
     (async()=>{
-      const prompt=`Generate exactly 5 technical interview questions for a ${candidate.skill} developer with ${candidate.experience} years experience.
-Mix: 2 conceptual (type "text"), 2 coding (type "code"), 1 system design (type "voice").
-Return ONLY a valid JSON array, no markdown, no backticks:
-[{"id":1,"type":"text","topic":"${candidate.skill}","difficulty":"Medium","question":"..."},
-{"id":2,"type":"code","topic":"Algorithms","difficulty":"Hard","question":"...","starterCode":"// write solution\\nfunction solution() {\\n  \\n}"},
-{"id":3,"type":"voice","topic":"System Design","difficulty":"Hard","question":"..."},
-{"id":4,"type":"text","topic":"Best Practices","difficulty":"Medium","question":"..."},
-{"id":5,"type":"code","topic":"${candidate.skill}","difficulty":"Medium","question":"...","starterCode":"// write here\\n"}]`;
-      try{
-        const raw=await callGemini(prompt,1400);
-        const parsed=parseJSON(raw);
-        if(parsed&&Array.isArray(parsed)){setQuestions(parsed);return;}
-      }catch{}
-      setQuestions([
-        {id:1,type:"text",topic:candidate.skill,difficulty:"Medium",question:`Explain the core architecture of ${candidate.skill}. How have you used it in production? What are its main advantages?`},
-        {id:2,type:"code",topic:"Algorithms",difficulty:"Hard",question:"Implement a function that finds all pairs in an array summing to a target value. Use O(n) time with a HashMap.",starterCode:"function findPairs(arr, target) {\n  const seen = new Map();\n  const pairs = [];\n  \n  return pairs;\n}"},
-        {id:3,type:"voice",topic:"System Design",difficulty:"Hard",question:`Design a high-availability ${candidate.skill} system for 10,000 req/sec. Discuss database strategy, caching, and failover.`},
-        {id:4,type:"text",topic:"Best Practices",difficulty:"Medium",question:"Explain SOLID principles with real examples from your experience. Which principle is hardest to apply and why?"},
-        {id:5,type:"code",topic:candidate.skill,difficulty:"Medium",question:"Implement a thread-safe Singleton pattern and explain pitfalls with double-checked locking.",starterCode:"class Singleton {\n  static instance = null;\n  constructor() {}\n  static getInstance() {\n    // implement\n  }\n}"},
-      ]);
+      // Build a highly specific, randomized Gemini prompt for this exact skill
+      const randomSeed = Math.floor(Math.random() * 10000);
+      const difficultyHint = exp <= 2 ? "beginner to intermediate" : exp >= 7 ? "advanced to expert" : "intermediate to advanced";
+
+      const prompt = `You are a senior technical interviewer specializing EXCLUSIVELY in ${skill}.
+Generate exactly 5 UNIQUE, RANDOMIZED, and HIGHLY SPECIFIC technical interview questions FOR ${skill} ONLY.
+Candidate: ${exp} years experience in ${skill} (${difficultyHint} level).
+Random seed for variation: ${randomSeed} — use this to ensure questions are different from previous runs.
+
+STRICT RULES:
+1. Every question MUST be specifically about ${skill} — no generic algorithms unless tied to ${skill} use cases.
+2. Include ${skill}-specific terminology, APIs, tools, frameworks, and real-world patterns.
+3. Questions must vary in topic: core concepts, internals/architecture, performance/optimization, real-world design, debugging/troubleshooting.
+4. Mix types: 2 conceptual text questions, 2 coding questions with starter code relevant to ${skill}, 1 voice/system design question.
+5. For coding questions, starterCode must use ${skill}-appropriate syntax and imports.
+6. Randomize the topics — do NOT repeat the same topics from a standard question list.
+
+Return ONLY a valid JSON array (no markdown, no backticks, no explanation):
+[
+  {"id":1,"type":"text","topic":"[specific ${skill} topic]","difficulty":"Medium","question":"[specific ${skill} question]"},
+  {"id":2,"type":"code","topic":"[specific ${skill} topic]","difficulty":"Hard","question":"[specific coding task in ${skill}]","starterCode":"[real ${skill} starter code with imports]"},
+  {"id":3,"type":"voice","topic":"System Design with ${skill}","difficulty":"Hard","question":"[system design question using ${skill}]"},
+  {"id":4,"type":"text","topic":"[specific ${skill} topic]","difficulty":"Medium","question":"[specific ${skill} question]"},
+  {"id":5,"type":"code","topic":"[specific ${skill} topic]","difficulty":"${exp >= 5 ? 'Hard' : 'Medium'}","question":"[specific coding task]","starterCode":"[real starter code]"}
+]`;
+
+      let success = false;
+      try {
+        const raw = await callGemini(prompt, 1800);
+        if (raw && raw.trim()) {
+          const parsed = parseJSON(raw);
+          if (parsed && Array.isArray(parsed) && parsed.length >= 4) {
+            // Validate each question has required fields
+            const valid = parsed.every(q => q.id && q.type && q.question && q.question.length > 20);
+            if (valid) {
+              setQuestions(parsed);
+              success = true;
+            }
+          }
+        }
+      } catch(e) {
+        console.warn("Gemini API failed, using skill-specific fallback:", e);
+      }
+
+      // Always use skill-specific random fallback if Gemini fails or returns invalid data
+      if (!success) {
+        const fallback = getRandomFallbackQuestions(skill, exp);
+        setQuestions(fallback);
+      }
     })();
   },[candidate]);
 
-  // Ask question when questions ready or qIdx changes
   useEffect(()=>{
     if(!questions.length) return;
     if(phase==="generating"){
@@ -675,23 +1036,23 @@ Return ONLY a valid JSON array, no markdown, no backticks:
     const q=questions[qIdx];
     const ans=answer||"(No response provided)";
     setPhase("evaluating"); setFeedback({loading:true});
-    const prompt=`You are a strict senior technical interviewer. Evaluate accurately.
+    const prompt=`You are a strict senior ${candidate.skill} technical interviewer. Evaluate accurately.
 Question: "${q.question}"
 Candidate: ${candidate.name}, ${candidate.skill}, ${candidate.experience} years.
 Answer: "${ans}"
 Return ONLY valid JSON, no markdown:
-{"score":75,"accuracy":70,"feedback":"2-3 sentence technical feedback","strengths":"key strength","improvements":"improvement area","verdict":"Excellent|Good|Needs Improvement|Poor"}`;
+{"score":75,"accuracy":70,"feedback":"2-3 sentence technical feedback specific to ${candidate.skill}","strengths":"key strength","improvements":"specific ${candidate.skill} improvement area","verdict":"Excellent|Good|Needs Improvement|Poor"}`;
     try{
       const raw=await callGemini(prompt,600);
       const ev=parseJSON(raw);
-      if(ev){
+      if(ev&&ev.score!==undefined){
         setScoreHistory(p=>[...p,{qId:q.id,topic:q.topic,...ev}]);
         setFeedback(ev);
         const fb=ev.verdict==="Excellent"?`Excellent! ${ev.strengths}. ${ev.feedback}`:ev.verdict==="Good"?`Good. ${ev.feedback}`:`${ev.feedback} Focus: ${ev.improvements}.`;
         setAgentMsg(fb); speak(fb);
-      } else throw new Error();
+      } else throw new Error("Invalid eval response");
     }catch{
-      const fb={score:55,accuracy:50,feedback:"Answer recorded. Aim for structured responses with concrete examples.",strengths:"Attempted the question",improvements:"Add technical depth",verdict:"Needs Improvement"};
+      const fb={score:55,accuracy:50,feedback:`Answer recorded. For ${candidate.skill}, aim for structured responses with concrete examples and specific technical terminology.`,strengths:"Attempted the question",improvements:`Deepen your ${candidate.skill} knowledge with hands-on projects`,verdict:"Needs Improvement"};
       setScoreHistory(p=>[...p,{qId:q.id,topic:q.topic,...fb}]);
       setFeedback(fb); setAgentMsg(fb.feedback);
     }
@@ -722,7 +1083,6 @@ Return ONLY valid JSON, no markdown:
 
   const tLow=timeLeft<30;
   return <div style={{height:"100vh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-    {/* Top bar */}
     <div style={{display:"flex",alignItems:"center",gap:14,padding:"0 20px",height:50,
       borderBottom:"1px solid rgba(255,255,255,0.05)",background:"rgba(7,11,20,0.97)",
       backdropFilter:"blur(20px)",flexShrink:0,zIndex:100}}>
@@ -740,10 +1100,8 @@ Return ONLY valid JSON, no markdown:
     </div>
 
     <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-      {/* Main */}
       <div style={{flex:1,display:"flex",flexDirection:"column",padding:18,gap:14,overflowY:"auto",minWidth:0}}>
 
-        {/* Agent */}
         <div style={{display:"flex",gap:13,animation:"fadeSlide .4s ease"}}>
           <AIAvatar speaking={aiSpeaking} color={emColor}/>
           <div style={{flex:1,background:"rgba(0,212,170,0.05)",border:"1px solid rgba(0,212,170,0.16)",
@@ -759,7 +1117,6 @@ Return ONLY valid JSON, no markdown:
           </div>
         </div>
 
-        {/* Question */}
         <Card>
           <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:13,alignItems:"center"}}>
             <Badge color={C.teal}>{q.topic}</Badge>
@@ -770,12 +1127,10 @@ Return ONLY valid JSON, no markdown:
           <p style={{color:"rgba(255,255,255,0.82)",fontSize:15,lineHeight:1.75,fontWeight:500}}>{q.question}</p>
         </Card>
 
-        {/* Answer */}
         {q.type==="code"  && <CodeAnswer  key={`code-${qIdx}`}  starterCode={q.starterCode} onChange={setAnswer}/>}
         {q.type==="voice" && <VoiceAnswer key={`voice-${qIdx}`} onChange={setAnswer}/>}
         {q.type==="text"  && <TextAnswer  key={`text-${qIdx}`}  onChange={setAnswer}/>}
 
-        {/* Feedback */}
         {feedback&&<div style={{background:"rgba(0,212,170,0.04)",border:"1px solid rgba(0,212,170,0.17)",
           borderRadius:14,padding:17,animation:"fadeSlide .3s ease"}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:9,flexWrap:"wrap"}}>
@@ -794,7 +1149,6 @@ Return ONLY valid JSON, no markdown:
             :<p style={{color:"rgba(255,255,255,0.68)",margin:0,fontSize:14,lineHeight:1.7}}>{feedback.feedback}</p>}
         </div>}
 
-        {/* Actions */}
         <div style={{display:"flex",gap:12}}>
           {!feedback
             ?<Btn onClick={submitAnswer} disabled={phase!=="answering"} variant="primary" style={{flex:1}}>
@@ -806,7 +1160,6 @@ Return ONLY valid JSON, no markdown:
         </div>
       </div>
 
-      {/* Sidebar */}
       <EmotionSidebar emotionState={emotionState} emo={emo} cameraOn={cameraOn}
         videoRef={videoRef} scoreHistory={scoreHistory} onToggleCamera={toggleCam}/>
     </div>
@@ -827,21 +1180,22 @@ Candidate: ${candidate.name}, ${candidate.skill}, ${candidate.experience} years.
 Scores: ${JSON.stringify(scoreHistory)}
 Avg score: ${avgSc}/100, accuracy: ${avgAc}%, emotion index: ${emoAvg}/100.
 Return ONLY valid JSON, no markdown:
-{"overallScore":${avgSc},"recommendation":"Selected|Hold|Rejected","confidence":82,"summary":"3 sentence executive summary","strengths":["s1","s2","s3"],"weaknesses":["w1","w2"],"nextSteps":"concrete next step","salaryRange":"salary in INR","role":"suggested title"}`;
+{"overallScore":${avgSc},"recommendation":"Selected|Hold|Rejected","confidence":82,"summary":"3 sentence executive summary mentioning ${candidate.skill} specifically","strengths":["s1","s2","s3"],"weaknesses":["w1","w2"],"nextSteps":"concrete next step for ${candidate.skill} role","salaryRange":"salary in INR for ${candidate.skill} developer","role":"suggested ${candidate.skill} title based on ${candidate.experience} years experience"}`;
       try{
         const raw=await callGemini(prompt,700);
         const rpt=parseJSON(raw);
-        if(rpt){
+        if(rpt&&rpt.recommendation){
           setReport({...rpt,candidate,scoreHistory,emoAvg,avgSc,avgAc});
           if(currentUser&&candidate.username===currentUser.username)
             pushHistory(currentUser.username,{date:new Date().toISOString(),score:rpt.overallScore,recommendation:rpt.recommendation,skill:candidate.skill});
         } else throw new Error();
       }catch{
         setReport({overallScore:avgSc,recommendation:avgSc>=70?"Selected":avgSc>=50?"Hold":"Rejected",
-          confidence:74,summary:`${candidate.name} completed the AI interview demonstrating ${avgSc>=70?"strong":"moderate"} ${candidate.skill} knowledge.`,
-          strengths:["Technical understanding","Problem-solving approach","Communication clarity"],
-          weaknesses:["Needs more depth in answers","Time management under pressure"],
-          nextSteps:"Schedule round 2 with the tech lead.",salaryRange:"₹12L–₹18L per annum",
+          confidence:74,summary:`${candidate.name} completed the AI interview demonstrating ${avgSc>=70?"strong":"moderate"} ${candidate.skill} knowledge with ${candidate.experience} years of experience.`,
+          strengths:["Technical understanding of core concepts","Problem-solving approach","Communication clarity"],
+          weaknesses:["Needs more depth in technical answers","Time management under pressure"],
+          nextSteps:`Schedule round 2 with the ${candidate.skill} tech lead to evaluate hands-on project experience.`,
+          salaryRange:"₹12L–₹18L per annum",
           role:`${candidate.experience>=5?"Senior":"Mid-Level"} ${candidate.skill} Developer`,
           candidate,scoreHistory,emoAvg,avgSc,avgAc});
       }
@@ -862,7 +1216,6 @@ Return ONLY valid JSON, no markdown:
 
   return <div style={{minHeight:"100vh",background:C.bg,padding:24}}>
     <div style={{maxWidth:780,margin:"0 auto",paddingTop:20,animation:"floatUp .5s ease"}}>
-      {/* Header */}
       <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:28,gap:16,flexWrap:"wrap"}}>
         <div>
           <div style={{color:C.dim,fontSize:11,letterSpacing:2.5,textTransform:"uppercase",marginBottom:8,fontWeight:600}}>Final AI Evaluation Report</div>
@@ -876,7 +1229,6 @@ Return ONLY valid JSON, no markdown:
         </div>
       </div>
 
-      {/* Rings */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:16}}>
         {[{l:"Overall",v:r.avgSc,c:C.teal},{l:"Accuracy",v:r.avgAc,c:C.blue},{l:"Emotion AI",v:r.emoAvg,c:C.purple},{l:"Confidence",v:Math.round(r.confidence),c:C.pink}].map(s=>(
           <Card key={s.l} style={{textAlign:"center",padding:"18px 8px"}}>
@@ -885,7 +1237,6 @@ Return ONLY valid JSON, no markdown:
         ))}
       </div>
 
-      {/* Summary */}
       <Card style={{marginBottom:14}}>
         <p style={{color:C.dim,fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:12,fontWeight:600}}>Executive Summary</p>
         <p style={{color:"rgba(255,255,255,0.72)",lineHeight:1.8,fontSize:15,marginBottom:20}}>{r.summary}</p>
@@ -901,7 +1252,6 @@ Return ONLY valid JSON, no markdown:
         </div>
       </Card>
 
-      {/* Breakdown */}
       <Card style={{marginBottom:14}}>
         <p style={{color:C.dim,fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:16,fontWeight:600}}>Question Breakdown</p>
         {r.scoreHistory.map((s,i)=>{
@@ -929,7 +1279,6 @@ Return ONLY valid JSON, no markdown:
         })}
       </Card>
 
-      {/* Offer */}
       <Card style={{display:"flex",gap:20,flexWrap:"wrap",marginBottom:24}}>
         <div style={{flex:1,minWidth:150}}>
           <p style={{color:C.dim,fontSize:10,letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontWeight:600}}>Suggested Role</p>
